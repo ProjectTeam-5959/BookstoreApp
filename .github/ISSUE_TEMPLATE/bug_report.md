@@ -2,18 +2,14 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: "\U0001F41Ebug"
 assignees: ''
 
 ---
 
----
 name: Bug report
-about: Bug 발생 시 작성해 주세요.
-title: "[Bug]-"
-labels: ''
-assignees: ''
-
+about: Bug <!--- 작업상황 작성해 주세요. -->
+title: [Bug] <!--- 타이틀 작성해 주세요. -->
 ---
 
 # 🐞 어떤 버그인가요?

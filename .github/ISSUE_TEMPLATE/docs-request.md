@@ -1,15 +1,15 @@
 ---
-name: Feature request
+name: Docs request
 about: Suggest an idea for this project
 title: ''
-labels: "\U0001F4BBfeat"
+labels: "\U0001F4C4docs"
 assignees: ''
 
 ---
 
-name: Feature request
-about: Feature <!--- 작업상황 작성해 주세요. -->
-title: [Feat] <!--- 타이틀 작성해 주세요. -->
+name: Docs request
+about: Docs <!--- 작업상황 작성해 주세요. -->
+title: [Docs] <!--- 타이틀 작성해 주세요. -->
 ---
 
 ## 📄 이슈 내용

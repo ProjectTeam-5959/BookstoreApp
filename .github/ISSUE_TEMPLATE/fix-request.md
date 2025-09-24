@@ -1,15 +1,15 @@
 ---
-name: Feature request
+name: Fix request
 about: Suggest an idea for this project
 title: ''
-labels: "\U0001F4BBfeat"
+labels: "\U0001F6E0️fix"
 assignees: ''
 
 ---
 
-name: Feature request
-about: Feature <!--- 작업상황 작성해 주세요. -->
-title: [Feat] <!--- 타이틀 작성해 주세요. -->
+name: Fix request
+about: Fix <!--- 작업상황 작성해 주세요. -->
+title: [Fix] <!--- 타이틀 작성해 주세요. -->
 ---
 
 ## 📄 이슈 내용

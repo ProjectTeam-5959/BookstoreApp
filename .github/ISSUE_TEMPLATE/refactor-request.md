@@ -1,15 +1,15 @@
 ---
-name: Feature request
+name: Refactor request
 about: Suggest an idea for this project
 title: ''
-labels: "\U0001F4BBfeat"
+labels: "⚡️refactor"
 assignees: ''
 
 ---
 
-name: Feature request
-about: Feature <!--- 작업상황 작성해 주세요. -->
-title: [Feat] <!--- 타이틀 작성해 주세요. -->
+name: Refactor request
+about: Refactor <!--- 작업상황 작성해 주세요. -->
+title: [Refactor] <!--- 타이틀 작성해 주세요. -->
 ---
 
 ## 📄 이슈 내용
