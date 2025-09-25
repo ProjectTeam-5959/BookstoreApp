@@ -12,15 +12,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     // '?'는 응답 데이터 T가 무엇이든 상관없음을 의미 (오류 응답이므로 data는 null)
     public ResponseEntity<ApiResponse<?>> handleBusinessException(BusinessException ex) {
-        // 1. BusinessException에 담긴 상태 코드와 메시지를 추출
-        HttpStatus httpStatus = HttpStatus.valueOf(ex.getStatus());
-        String errorMessage = ex.getMessage(); // 서비스에서 설정한 상세 메시지
-
-        // 2. ApiResponse.error()를 사용해 공통 오류 응답 객체 생성
-        ApiResponse<?> errorResponse = ApiResponse.error(errorMessage);
-
-        // 3. HTTP 상태 코드와 함께 응답 반환
-        return new ResponseEntity<>(errorResponse, httpStatus);
+        // 1. 예외 객체에서 ErrorCode를 꺼냄 (도메인별 에러 정보 포함)
+        ErrorCode errorCode = ex.getErrorCode();
+        // 2. ErrorCode의 메시지를 기반으로 공통 응답 객체 생성 (data는 null, 메시지만 포함)
+        ApiResponse<?> errorResponse = ApiResponse.error(errorCode.getMessage());
+        // 3. ErrorCode의 상태 코드를 기반으로 HTTP 응답 객체 생성 후 반환
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getStatus()));
     }
 
     // 2. 예상치 못한 서버 오류 처리 로직 (500 에러)
