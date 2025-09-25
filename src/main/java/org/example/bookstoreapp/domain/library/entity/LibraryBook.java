@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
                 @UniqueConstraint(columnNames = {"library_id", "book_id"})
       }
 )
-public class LibraryBooks {
+public class LibraryBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,14 +44,14 @@ public class LibraryBooks {
     @Column(nullable = false)
     private LocalDateTime addedAt;
 
-    protected LibraryBooks(Library library, Book book) {
+    protected LibraryBook(Library library, Book book) {
         this.library = library;
         this.book = book;
         this.addedAt = LocalDateTime.now();
     }
 
-    public static LibraryBooks of(Library library, Book book) {
-        return new LibraryBooks(library, book);
+    public static LibraryBook of(Library library, Book book) {
+        return new LibraryBook(library, book);
     }
 
 }

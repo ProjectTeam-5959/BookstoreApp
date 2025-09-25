@@ -29,7 +29,7 @@ public class Library {
     // mappedBy = "library" : 양방향 매핑에서 외래키(FK) 관리하는 주인이 누구인지 지정
     // cascade = CascadeType.ALL : 라이브러리 저장/삭제 시, 그 안에 속한 LibraryBook도 같이 저장/삭제됨
     // orphanRemoval = true : 부모 컬렉션에서 자식 엔티티 제거 시, DB도 자동 삭제
-    private List<LibraryBooks> libraryBooks = new ArrayList<>();
+    private List<LibraryBook> libraryBooks = new ArrayList<>();
 
     public Library(User user) {
         this.user = user;
