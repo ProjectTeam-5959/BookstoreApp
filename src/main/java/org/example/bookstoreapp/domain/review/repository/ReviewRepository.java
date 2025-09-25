@@ -1,6 +1,6 @@
-package org.example.bookstoreapp.review.repository;
+package org.example.bookstoreapp.domain.review.repository;
 
-import org.example.bookstoreapp.review.entity.Review;
+import org.example.bookstoreapp.domain.review.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {

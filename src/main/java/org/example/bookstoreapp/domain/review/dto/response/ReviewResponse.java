@@ -1,4 +1,4 @@
-package org.example.bookstoreapp.review.dto.response;
+package org.example.bookstoreapp.domain.review.dto.response;
 
 import lombok.Getter;
 

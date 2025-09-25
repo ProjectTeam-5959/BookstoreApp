@@ -1,4 +1,4 @@
-package org.example.bookstoreapp.review.entity;
+package org.example.bookstoreapp.domain.review.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
