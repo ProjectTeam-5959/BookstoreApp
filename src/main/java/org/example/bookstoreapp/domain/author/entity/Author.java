@@ -9,7 +9,7 @@ import org.example.bookstoreapp.common.entity.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "author")
+@Table(name = "authors")
 public class Author extends BaseEntity {
 
     @Id
@@ -17,7 +17,7 @@ public class Author extends BaseEntity {
     private Long id;
 
     // 작가 이름
-    @Column(name = "author", nullable = false, length = 50)
+    @Column(name = "author_name", nullable = false, length = 50)
     private String name;
 
     public Author(String name) {
