@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     @NotBlank
     private String name;
 
-    @Column(length = 255, nullable = false)
+    @Column(nullable = false)
     private String password;
 
     protected User(String nickname, String email, UserRole userRole, String name, String password) {
