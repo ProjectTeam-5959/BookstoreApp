@@ -11,11 +11,11 @@ public interface BookContributorRepository extends JpaRepository<BookContributor
             Long bookId
     );
 
-    List<BookContributor> findAllByAuthor_Id(
+    List<BookContributor> findAllByContributor_Id(
             Long authorId
     );
 
-    boolean existsByBook_IdAndAuthor_IdAndRole(
+    boolean existsByBook_IdAndContributor_IdAndRole(
             Long bookId, Long authorId, ContributorRole role
     );
 }

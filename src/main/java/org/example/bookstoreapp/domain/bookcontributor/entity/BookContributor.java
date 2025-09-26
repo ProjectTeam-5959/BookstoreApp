@@ -2,6 +2,7 @@ package org.example.bookstoreapp.domain.bookcontributor.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.bookstoreapp.common.entity.BaseEntity;
@@ -31,6 +32,7 @@ public class BookContributor extends BaseEntity {
     @Column(name = "role", nullable = false, length = 20)
     private ContributorRole role;
 
+    @Builder
     public BookContributor(Contributor contributor, Book book, ContributorRole role) {
         this.contributor = contributor;
         this.book = book;
