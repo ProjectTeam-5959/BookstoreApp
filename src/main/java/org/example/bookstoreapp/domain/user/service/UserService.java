@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -34,10 +33,6 @@ public class UserService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(AuthErrorCode.USER_NOT_FOUND_BY_ID));
-
-        log.info("storedPassword = {}", user.getPassword());
-        log.info("matches old? {}", passwordEncoder.matches(request.getOldPassword(), user.getPassword()));
-        log.info("matches new? {}", passwordEncoder.matches(request.getNewPassword(), user.getPassword()));
 
         if(passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
             throw new BusinessException(AuthErrorCode.INVALID_NEW_PASSWORD);
