@@ -11,11 +11,12 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class BookCreateRequest {
+
     @NotBlank @Size(max = 50)
     private String publisher;
 
     @NotBlank @Size(min = 10, max = 20)
-    private String isbn;                // ISBN-10/13 (하이픈 허용)
+    private String isbn;                    // 하이픈 허용
 
     @NotBlank @Size(max = 30)
     private String category;
@@ -24,5 +25,5 @@ public class BookCreateRequest {
     private String title;
 
     @PastOrPresent
-    private LocalDate publicationDate;
+    private LocalDate publicationDate;      // 출판일 형식 : yyyy-MM-dd
 }

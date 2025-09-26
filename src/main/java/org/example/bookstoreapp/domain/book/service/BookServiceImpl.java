@@ -34,7 +34,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> searchBooks(String title, String category, String publisher) {
         // 기본 조건: titleContains
         Specification<Book> spec = BookSpecs.titleContains(title);
-        // 'where(org.springframework.data.jpa.domain.Specification<T>)'은(는) 버전 3.5.0 이상에서 지원 중단되며 제거될 예정입니다
+        // 'where(org.springframework.data.jpa.domain.Specification<T>)'은(는) 버전 3.5.0 이상에서 지원 중단되며 제거될 예정
 //        Specification<Book> spec = Specification.where(BookSpecs.titleContains(title));
 
         // and 조건으로 category, publisher 추가
@@ -48,7 +48,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponse create(BookCreateRequest req) {
         if (bookRepository.existsByIsbn(req.getIsbn())) {
-            throw new DataIntegrityViolationException("ISBN already exists");
+            throw new DataIntegrityViolationException("존재하지 않는 ISBN 입니다.");
         }
         Book book = Book.builder()
                 .publisher(req.getPublisher())
@@ -64,7 +64,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponse get(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Book not found: " + id));
+                new EntityNotFoundException("도서를 찾을 수 없습니다."));
         return toResponse(book);
     }
 
@@ -81,11 +81,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponse update(Long id, BookUpdateRequest req) {
         Book book = bookRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Book not found: " + id));
+                new EntityNotFoundException("도서를 찾을 수 없습니다."));
 
         if (req.getIsbn() != null && !req.getIsbn().equals(book.getIsbn())) {
             if (bookRepository.existsByIsbn(req.getIsbn())) {
-                throw new DataIntegrityViolationException("ISBN already exists");
+                throw new DataIntegrityViolationException("이미 존재하는 ISBN 입니다.");
             }
             book.changeIsbn(req.getIsbn());
         }
@@ -94,7 +94,8 @@ public class BookServiceImpl implements BookService {
         if (req.getTitle() != null) book.changeTitle(req.getTitle());
         if (req.getPublicationDate() != null) book.changePublicationDate(req.getPublicationDate());
 
-        return toResponse(book); // JPA dirty checking
+        // JPA 더티 체킹.
+        return toResponse(book);
     }
 
     @Override
