@@ -22,7 +22,7 @@ public enum AuthErrorCode implements ErrorCode {
     PASSWORD_MISMATCH(HttpStatus.FORBIDDEN  ,  "비밀번호가 일치하지 않습니다."),
     INVALID_USER_ROLE(HttpStatus.BAD_REQUEST,  "유효하지 않은 UserRole입니다."),
 
-    INVALID_NEW_PASSWORD(HttpStatus.BAD_REQUEST,"새 비밀번호는 기존 비밀번호와 같을 수 없습니다."),
+    INVALID_NEW_PASSWORD(HttpStatus.CONFLICT,"새 비밀번호는 기존 비밀번호와 같을 수 없습니다."),
     INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST,"비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.")
     ;
     private final HttpStatus status;
