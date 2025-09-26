@@ -42,8 +42,8 @@ public class SecurityConfig {
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/auth")).permitAll()
-                        .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
-                        .requestMatchers("/open").permitAll()
+                        .requestMatchers("/api/admin/**").hasAuthority(UserRole.Authority.ADMIN)
+//                        .requestMatchers("/open").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
