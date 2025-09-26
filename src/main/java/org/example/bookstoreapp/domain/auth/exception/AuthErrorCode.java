@@ -3,7 +3,6 @@ package org.example.bookstoreapp.domain.auth.exception;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.exception.ErrorCode;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 
 @Getter
