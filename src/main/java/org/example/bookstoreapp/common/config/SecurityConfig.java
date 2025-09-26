@@ -28,7 +28,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAccessDeniedHandler customAccessDeniedHandler) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -42,8 +42,11 @@ public class SecurityConfig {
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/auth")).permitAll()
-                        .requestMatchers("/api/admin/**").hasAuthority(UserRole.Authority.ADMIN)
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/admin")).hasAuthority(UserRole.Authority.ADMIN)
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .build();
     }
