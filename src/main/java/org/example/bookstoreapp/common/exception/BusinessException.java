@@ -1,15 +1,20 @@
 package org.example.bookstoreapp.common.exception;
 
-public class BusinessException extends RuntimeException{
+// BusinessException을 `ErrorCode` 기반으로 변경
+public class BusinessException extends RuntimeException {
 
-    private final int status;
+    private final ErrorCode errorCode;
 
-    public BusinessException(String message, int status) {
-        super(message);
-        this.status=status;
+    public BusinessException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
     }
 
     public int getStatus() {
-        return status;
+        return errorCode.getStatus();
+    }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
     }
 }
