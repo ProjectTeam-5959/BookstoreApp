@@ -20,4 +20,3 @@ server:
 jwt:
   secret:
     key: TXlTdXBlclNlY3JldEtleQTXlTdXBlclNlY3JldEtleQTXlTdXBlclNlY3JldEtleQ==
-    expiration: 1800
