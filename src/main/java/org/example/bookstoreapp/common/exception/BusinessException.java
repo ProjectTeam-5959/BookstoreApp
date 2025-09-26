@@ -1,15 +1,19 @@
 package org.example.bookstoreapp.common.exception;
 
-public class BusinessException extends RuntimeException{
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
-    private final int status;
+@Getter
+// BusinessException을 `ErrorCode` 기반으로 변경
+public class BusinessException extends RuntimeException {
 
-    public BusinessException(String message, int status) {
-        super(message);
-        this.status=status;
+    private final ErrorCode errorCode;
+
+    public BusinessException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
     }
 
-    public int getStatus() {
-        return status;
-    }
+    public HttpStatus getStatus() {
+        return errorCode.getStatus(); }
 }
