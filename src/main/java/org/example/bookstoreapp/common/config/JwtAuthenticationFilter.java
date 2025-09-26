@@ -78,6 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Long userId = Long.valueOf(claims.getSubject());
         String email = claims.get("email", String.class);
         UserRole userRole = UserRole.of(claims.get("userRole", String.class));
+
         AuthUser authUser = new AuthUser(userId, email, userRole);
         Authentication authenticationToken = new JwtAuthenticationToken(authUser);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -85,7 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setStatus(status.value());
-        response.setContentType("application/json;charset=UTF=8");
+        response.setContentType("application/json;charset=UTF-8");
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("status", status.name());
         errorResponse.put("code", status.value());
