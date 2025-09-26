@@ -7,13 +7,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BookService {
-    BookResponse create(BookCreateRequest request);
+    BookResponse create(
+            BookCreateRequest request, Long userId
+    );
 
-    BookResponse get(Long id);
+    BookResponse get(
+            Long id
+    );
 
-    Page<BookResponse> search(String title, String category, String publisher, String isbn, Pageable pageable);
+    Page<BookResponse> search(
+            String title, String category, String publisher, String isbn, Pageable pageable
+    );
 
-    BookResponse update(Long id, BookUpdateRequest request); // PATCH semantics
+    BookResponse update(
+            Long id, BookUpdateRequest request
+    );
 
-    void delete(Long id);
+    void delete(
+            Long id
+    );
 }
