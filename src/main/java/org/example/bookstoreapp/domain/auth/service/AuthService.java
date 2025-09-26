@@ -9,6 +9,7 @@ import org.example.bookstoreapp.domain.auth.exception.AuthErrorCode;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.enums.UserRole;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public String signup(SignupRequest request) {
@@ -27,7 +29,7 @@ public class AuthService {
         if (userRepository.existsByNickname(request.getNickname())) {
             throw new BusinessException(AuthErrorCode.DUPLICATE_NICKNAME);
         }
-        User newUser = User.of(request.getNickname(), request.getEmail(), UserRole.ROLE_USER, request.getName(), request.getPassword());
+        User newUser = User.of(request.getNickname(), request.getEmail(), UserRole.ROLE_USER, request.getName(), passwordEncoder.encode(request.getPassword()));
         User savedUser = userRepository.save(newUser);
 
         return jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole());
@@ -38,6 +40,9 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BusinessException(AuthErrorCode.USER_NOT_FOUND_BY_EMAIL)
                 );
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BusinessException(AuthErrorCode.PASSWORD_MISMATCH);
+        }
         return jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
     }
 
