@@ -43,7 +43,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/auth")).permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority(UserRole.Authority.ADMIN)
-//                        .requestMatchers("/open").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

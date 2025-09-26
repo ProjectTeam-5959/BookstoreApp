@@ -1,7 +1,6 @@
 package org.example.bookstoreapp.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.exception.AuthErrorCode;
 import org.example.bookstoreapp.domain.user.dto.request.UserChangeNameAndPasswordRequest;
