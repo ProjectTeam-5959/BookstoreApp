@@ -2,10 +2,12 @@ package org.example.bookstoreapp.domain.user.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.bookstoreapp.common.entity.BaseEntity;
+import org.example.bookstoreapp.domain.user.enums.UserRole;
 
 @Getter
 @Entity
@@ -24,8 +26,9 @@ public class User extends BaseEntity {
     @NotBlank
     private String email;
 
-    @Column(length = 10, nullable = false)
-    @NotBlank
+    @Column(length = 15, nullable = false)
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
     @Column(length = 30, nullable = false)
