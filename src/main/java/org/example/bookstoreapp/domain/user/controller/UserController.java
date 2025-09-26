@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/usrs/me")
+    @GetMapping("/users/me")
     public ResponseEntity<ApiResponse<UserResponse>> getUser(
             @AuthenticationPrincipal AuthUser authUser
     ) {
