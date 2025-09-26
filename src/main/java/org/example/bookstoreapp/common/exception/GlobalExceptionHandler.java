@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
     // '?'는 응답 데이터 T가 무엇이든 상관없음을 의미 (오류 응답이므로 data는 null)
     public ResponseEntity<ApiResponse<?>> handleBusinessException(BusinessException ex) {
         // 1. BusinessException에 담긴 상태 코드와 메시지를 추출
-        HttpStatus httpStatus = ex.getStatus();
+        HttpStatus httpStatus = HttpStatus.valueOf(ex.getStatus());
         String errorMessage = ex.getMessage(); // 서비스에서 설정한 상세 메시지
 
         // 2. ApiResponse.error()를 사용해 공통 오류 응답 객체 생성
