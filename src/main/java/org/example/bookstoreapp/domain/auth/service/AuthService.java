@@ -1,7 +1,6 @@
 package org.example.bookstoreapp.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.bookstoreapp.common.config.JwtUtil;
 import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.request.SigninRequest;
@@ -13,7 +12,6 @@ import org.example.bookstoreapp.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -23,7 +21,6 @@ public class AuthService {
 
     @Transactional
     public String signup(SignupRequest request) {
-        log.info("Signup request 확인: {}", request);
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new BusinessException(AuthErrorCode.DUPLICATE_EMAIL);
         }
@@ -32,7 +29,6 @@ public class AuthService {
         }
         User newUser = User.of(request.getNickname(), request.getEmail(), UserRole.ROLE_USER, request.getName(), request.getPassword());
         User savedUser = userRepository.save(newUser);
-        log.info("Signup request 확인2: {}", request);
 
         return jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole());
     }
