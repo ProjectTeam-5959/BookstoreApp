@@ -3,6 +3,7 @@ package org.example.bookstoreapp.domain.user.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.exception.BusinessException;
+import org.example.bookstoreapp.domain.auth.exception.AuthErrorCode;
 
 import java.util.Arrays;
 
@@ -18,7 +19,7 @@ public enum UserRole {
         return Arrays.stream(UserRole.values())
                 .filter(r -> r.name().equalsIgnoreCase(role))
                 .findFirst()
-                .orElseThrow(() -> new BusinessException("유효하지 않은 UerRole", 400));
+                .orElseThrow(() -> new BusinessException(AuthErrorCode.INVALID_USER_ROLE));
     }
 
     public static class Authority {
