@@ -9,6 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class LibraryResponse {
 
-    private String nickname;
     private List<LibraryBookResponse> books;
 }
