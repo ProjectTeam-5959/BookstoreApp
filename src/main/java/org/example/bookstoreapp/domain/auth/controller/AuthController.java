@@ -18,7 +18,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<ApiResponse<String>> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<String>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         String bearerToken = authService.signup(signupRequest);
         return ResponseEntity.ok(
                 ApiResponse.success("회원가입이 완료되었습니다.", bearerToken)
