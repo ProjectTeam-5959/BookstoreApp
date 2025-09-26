@@ -14,6 +14,11 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // JPA 프록시용
 @Table(name = "books")                      // TODO: 추후 인덱스/유니크 제약 추가 예정
+/**
+ * 유니크 키 넣는 법 (1)
+ * @Table(name = "books", uniqueConstraints = {
+ *     @UniqueConstraint(name = "uk_isbn", columnNames = {"isbn"})
+ * */
 public class Book extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +27,10 @@ public class Book extends BaseEntity {
     @Column(name = "publisher", nullable = false, length = 50)
     private String publisher;
 
+    /**
+     * 유니크 키 넣는 법 (2)
+     * @Column(name = "isbn", nullable = false, length = 20, unique = true)
+     * */
     @Column(name = "isbn", nullable = false, length = 20)
     private String isbn;                    // 하이픈(-) 포함 허용
 
@@ -34,14 +43,18 @@ public class Book extends BaseEntity {
     @Column(name = "publication_date")
     private LocalDate publicationDate;      // ERD는 DATETIME이지만 LocalDate로 단순화
 
+    @Column(name = "created_by", nullable = false, updatable = false)
+    private Long createdBy;                 // 도서 ID (누가 생성했는지 추적용 - 관리자가 등록 하지만 확인용)
+
     // 생성자: 외부 직접 접근 금지
     @Builder
-    private Book(String publisher, String isbn, String category, String title, LocalDate publicationDate) {
+    private Book(String publisher, String isbn, String category, String title, LocalDate publicationDate, Long createdBy) {
         this.publisher = publisher;
         this.isbn = isbn;
         this.category = category;
         this.title = title;
         this.publicationDate = publicationDate;
+        this.createdBy = createdBy;
     }
 
     // 정합성 검증
@@ -62,17 +75,19 @@ public class Book extends BaseEntity {
 
     // 팩토리 메서드
     public static Book create(String publisher,
-                              String isbn,
-                              String category,
-                              String title,
-                              LocalDate publicationDate
+                                             String isbn,
+                                             String category,
+                                             String title,
+                                             LocalDate publicationDate,
+                                             Long createdBy
     ) {
         return new Book(
                 publisher,
                 isbn,
                 category,
                 title,
-                publicationDate
+                publicationDate,
+                createdBy
         );
     }
 
