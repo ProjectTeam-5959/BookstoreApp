@@ -45,10 +45,13 @@ public class UserService {
         return new UserResponse(user.getName(), user.getNickname(), user.getUserRole(), user.getEmail());
     }
 
+    private static final String PASSWORD_REGEXP = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,30}$";
+
     private static void validateNewPassword(UserChangeNameAndPasswordRequest userChangeNameAndPasswordRequest) {
-        if (userChangeNameAndPasswordRequest.getNewPassword().length() < 8 ||
-                !userChangeNameAndPasswordRequest.getNewPassword().matches(".*\\d.*") ||
-                !userChangeNameAndPasswordRequest.getNewPassword().matches(".*[A-Z].*")) {
+        String newPassword = userChangeNameAndPasswordRequest.getNewPassword();
+
+        // 정규 표현식으로 모든 조건(길이, 영문, 숫자, 특수문자)을 한 번에 검사
+        if (!newPassword.matches(PASSWORD_REGEXP)) {
             throw new BusinessException(AuthErrorCode.INVALID_PASSWORD_FORMAT);
         }
     }

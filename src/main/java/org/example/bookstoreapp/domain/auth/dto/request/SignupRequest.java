@@ -18,10 +18,10 @@ public class SignupRequest {
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력값입니다.")
-    @Size(min = 8, max = 64)
+    @Size(min = 8, max = 30)
     @Pattern(
-            regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,64}$",
-            message = "비밀번호는 대소문자 불문 영문, 숫자, 특수문자를 모두 포함해야 하며, 8~64자여야 합니다.")
+            regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,30}$",
+            message = "비밀번호는 대소문자 불문 영문, 숫자, 특수문자를 모두 포함해야 하며, 8~30자여야 합니다.")
     private String password;
 
     @Size(min = 2, max = 30, message = "이름은 2~30자여야 합니다.")
