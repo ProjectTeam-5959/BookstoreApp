@@ -3,12 +3,15 @@ package org.example.bookstoreapp.domain.library.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
+import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
 import org.example.bookstoreapp.domain.library.dto.response.LibraryResponse;
 import org.example.bookstoreapp.domain.library.service.LibraryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,5 +29,17 @@ public class LibraryController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success("내 서재를 조회했습니다.", response));
+    }
+    
+    // 내 서재에 책 등록 //
+    @PostMapping("/v1/libraries")
+    public ResponseEntity<ApiResponse<LibraryResponse>> addBookLibrary(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestBody AddBookRequest addBookRequest
+    ){
+        LibraryResponse response = libraryService.addBookLibrary(authUser, addBookRequest);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success("내 서재에 책을 추가했습니다.", response));
     }
 }

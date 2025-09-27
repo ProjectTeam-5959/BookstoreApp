@@ -33,14 +33,12 @@ public class LibraryBook {
     @JoinColumn(name = "library_id", nullable = false)
     private Library library;
 
-
     // 책 (FK)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-
-    // 서재에 책 등록 시간
+    // 서재에 책 등록된 날짜(시간)
     @Column(nullable = false)
     private LocalDateTime addedAt;
 
@@ -50,8 +48,8 @@ public class LibraryBook {
         this.addedAt = LocalDateTime.now();
     }
 
+    // 정적 팩토리 메서드 (엔티티 생성용)
     public static LibraryBook of(Library library, Book book) {
         return new LibraryBook(library, book);
     }
-
 }
