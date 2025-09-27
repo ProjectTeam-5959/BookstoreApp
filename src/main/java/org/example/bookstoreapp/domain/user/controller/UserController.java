@@ -37,5 +37,4 @@ public class UserController {
                 ApiResponse.success("내 정보를 수정했습니다.", userService.changeNicknameAndPassword(authuser.getId(),request))
         );
     }
-
 }

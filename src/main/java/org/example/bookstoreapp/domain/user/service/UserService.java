@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.example.bookstoreapp.domain.auth.dto.request.SignupRequest.PASSWORD_REGEXP;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -44,10 +46,7 @@ public class UserService {
 
         return new UserResponse(user.getName(), user.getNickname(), user.getUserRole(), user.getEmail());
     }
-
-    private static final String PASSWORD_REGEXP = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,30}$";
-
-    private static void validateNewPassword(UserChangeNameAndPasswordRequest userChangeNameAndPasswordRequest) {
+    public static void validateNewPassword(UserChangeNameAndPasswordRequest userChangeNameAndPasswordRequest) {
         String newPassword = userChangeNameAndPasswordRequest.getNewPassword();
 
         // 정규 표현식으로 모든 조건(길이, 영문, 숫자, 특수문자)을 한 번에 검사
