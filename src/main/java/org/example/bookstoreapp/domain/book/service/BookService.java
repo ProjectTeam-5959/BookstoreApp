@@ -3,6 +3,8 @@ package org.example.bookstoreapp.domain.book.service;
 import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
 import org.example.bookstoreapp.domain.book.dto.BookResponse;
 import org.example.bookstoreapp.domain.book.dto.BookUpdateRequest;
+import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorRequest;
+import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,5 +27,11 @@ public interface BookService {
 
     void delete(
             Long id
+    );
+
+    BookContributorResponse linkContributor(
+            Long bookId,
+            Long contributorId,
+            BookContributorRequest request
     );
 }

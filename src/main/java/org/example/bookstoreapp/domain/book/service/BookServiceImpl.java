@@ -10,6 +10,12 @@ import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.book.exception.BookErrorCode;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.book.repository.BookSpecs;
+import org.example.bookstoreapp.domain.bookcontributor.BookContributorRepository;
+import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorRequest;
+import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorResponse;
+import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
+import org.example.bookstoreapp.domain.contributor.entity.Contributor;
+import org.example.bookstoreapp.domain.contributor.repository.ContributorRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,10 +31,12 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final ContributorRepository contributorRepository;
+    private final BookContributorRepository bookContributorRepository;
 
     /**
      * 도서 검색 서비스 메서드
-     *
+     * <p>
      * - title, category, publisher 조건을 Specification 으로 동적 조합.
      * - 입력값이 null 또는 빈 값이면 해당 조건은 무시됨.
      * - 예: title + category만 검색 / category + publisher만 검색 가능.
@@ -167,5 +175,29 @@ public class BookServiceImpl implements BookService {
                 .createdAt(b.getCreatedAt())
                 .modifiedAt(b.getModifiedAt())
                 .build();
+    }
+
+    @Override
+    public BookContributorResponse linkContributor(
+            Long bookId,
+            Long contributorId,
+            BookContributorRequest request
+    ) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() ->
+                new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
+
+        Contributor contributor = contributorRepository.findById(contributorId).orElseThrow(
+                () -> new BusinessException(BookErrorCode.CONTRIBUTOR_NOT_FOUND)
+        );
+
+        BookContributor bookContributor = new BookContributor(book, contributor, request.getRole());
+
+        bookContributorRepository.save(bookContributor);
+
+        return new BookContributorResponse(
+                bookContributor.getBook().getId(),
+                bookContributor.getContributor().getId(),
+                bookContributor.getRole()
+        );
     }
 }
