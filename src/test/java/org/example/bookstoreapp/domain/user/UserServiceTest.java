@@ -62,4 +62,16 @@ public class UserServiceTest {
                 () -> userService.getUser(userId),
                 "user not found");
     }
+
+    @Test
+    void changeNicknameAndPassword_성공한다() {}
+
+    @Test
+    void changeNicknameAndPassword_새비밀번호형식이_올바르지않으면_INVALID_PASSWORD_FORMAT_예외() {}
+
+    @Test
+    void changeNicknameAndPassword_새비밀번호가_기존과_같으면_INVALID_NEW_PASSWORD_예외() {}
+
+    @Test
+    void changeNicknameAndPassword_기존비밀번호가_틀리면_PASSWORD_MISMATCH_예외() {}
 }
