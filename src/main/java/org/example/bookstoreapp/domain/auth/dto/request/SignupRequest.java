@@ -24,11 +24,11 @@ public class SignupRequest {
             message = "비밀번호는 대소문자 불문 영문, 숫자, 특수문자를 모두 포함해야 하며, 8~30자여야 합니다.")
     private String password;
 
-    @Size(min = 2, max = 30, message = "이름은 2~30자여야 합니다.")
     @NotBlank(message = "사용자 이름은 필수 입력값입니다.")
+    @Size(min = 2, max = 30, message = "이름은 2~30자여야 합니다.")
     private String name;
 
-    @Size(min=2, max=30, message = "닉네임은 2~30자여야 합니다.")
     @NotBlank(message = "닉네임은 필수 입력값입니다.")
+    @Size(min=2, max=30, message = "닉네임은 2~30자여야 합니다.")
     private String nickname;
 }
