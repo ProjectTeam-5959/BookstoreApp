@@ -1,6 +1,7 @@
 package org.example.bookstoreapp.domain.auth;
 
 import org.example.bookstoreapp.common.config.JwtUtil;
+import org.example.bookstoreapp.domain.auth.dto.request.SigninRequest;
 import org.example.bookstoreapp.domain.auth.dto.request.SignupRequest;
 import org.example.bookstoreapp.domain.auth.service.AuthService;
 import org.example.bookstoreapp.domain.user.entity.User;
@@ -13,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -69,8 +72,23 @@ public class AuthServiceTest {
 
     @Test
     void login_성공한다() {
-    //when
-    // then
+        //given
+        SigninRequest request = new SigninRequest(EMAIL,RAW_PASSWORD);
+        User newUser = User.of(NICKNAME, EMAIL, UserRole.ROLE_USER, NAME, HASED_PASSWORD);
+        ReflectionTestUtils.setField(newUser,"id",USER_ID);
+
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(newUser));
+        given(passwordEncoder.matches(RAW_PASSWORD, HASED_PASSWORD)).willReturn(true);
+        given(jwtUtil.createToken(anyLong(), anyString(), any(UserRole.class))).willReturn(MOCK_JWT);
+
+        //when
+        String token = authService.login(request);
+
+        // then
+        assertThat(token).isEqualTo(MOCK_JWT);
+        then(userRepository).should(times(1)).findByEmail(EMAIL);
+        then(passwordEncoder).should(times(1)).matches(RAW_PASSWORD,HASED_PASSWORD);
+        then(jwtUtil).should(times(1)).createToken(USER_ID, EMAIL, UserRole.ROLE_USER);
     }
 
     @Test
