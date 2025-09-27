@@ -6,8 +6,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.example.bookstoreapp.common.exception.BusinessException;
-import org.example.bookstoreapp.domain.auth.exception.AuthErrorCode;
 import org.example.bookstoreapp.domain.user.enums.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
