@@ -46,6 +46,7 @@ public class Book extends BaseEntity {
         contributor.getBookContributors().add(bookContributor);
     }
 
+    // 출판사명
     @Column(name = "publisher", nullable = false, length = 50)
     private String publisher;
 
@@ -53,11 +54,12 @@ public class Book extends BaseEntity {
      * 유니크 키 넣는 법 (2)
      * @Column(name = "isbn", nullable = false, length = 20, unique = true)
      * */
-    @Column(name = "isbn", nullable = false, length = 20)
-    private String isbn;                    // 하이픈(-) 포함 허용
+    @Column(name = "isbn", nullable = false, length = 20, unique = true)
+    private String isbn;                        // 하이픈(-) 포함 허용
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false, length = 20)
-    private String category;
+    private BookCategory category;              // 도서 카테고리 (예: 소설, 에세이, 컴퓨터/IT, 인문, 경제/경영, 자기계발 등)
 
     @Column(name = "title", nullable = false, length = 50)
     private String title;
@@ -70,7 +72,7 @@ public class Book extends BaseEntity {
 
     // 생성자: 외부 직접 접근 금지
     @Builder
-    private Book(String publisher, String isbn, String category, String title, LocalDate publicationDate, Long createdBy) {
+    private Book(String publisher, String isbn, BookCategory category, String title, LocalDate publicationDate, Long createdBy) {
         this.publisher = publisher;
         this.isbn = isbn;
         this.category = category;
@@ -97,11 +99,11 @@ public class Book extends BaseEntity {
 
     // 팩토리 메서드
     public static Book create(String publisher,
-                                             String isbn,
-                                             String category,
-                                             String title,
-                                             LocalDate publicationDate,
-                                             Long createdBy
+                              String isbn,
+                              BookCategory category,
+                              String title,
+                              LocalDate publicationDate,
+                              Long createdBy
     ) {
         return new Book(
                 publisher,
@@ -122,7 +124,7 @@ public class Book extends BaseEntity {
         this.isbn = isbn;
     }
 
-    public void changeCategory(String category) {
+    public void changeCategory(BookCategory category) {
         this.category = category;
     }
 

@@ -6,6 +6,8 @@ import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
 import org.example.bookstoreapp.domain.book.dto.BookResponse;
 import org.example.bookstoreapp.domain.book.dto.BookUpdateRequest;
 import org.example.bookstoreapp.domain.book.entity.Book;
+import org.example.bookstoreapp.domain.book.entity.BookCategory;
+import org.example.bookstoreapp.domain.book.exception.InvalidBookException;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.book.repository.BookSpecs;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -54,7 +56,7 @@ public class BookServiceImpl implements BookService {
         Book book = Book.builder()
                 .publisher(req.getPublisher())
                 .isbn(req.getIsbn())
-                .category(req.getCategory())
+                .category(BookCategory.valueOf(req.getCategory()))
                 .title(req.getTitle())
                 .publicationDate(req.getPublicationDate())
                 .createdBy(userId)
@@ -92,9 +94,17 @@ public class BookServiceImpl implements BookService {
             book.changeIsbn(req.getIsbn());
         }
         if (req.getPublisher() != null) book.changePublisher(req.getPublisher());
-        if (req.getCategory() != null) book.changeCategory(req.getCategory());
         if (req.getTitle() != null) book.changeTitle(req.getTitle());
         if (req.getPublicationDate() != null) book.changePublicationDate(req.getPublicationDate());
+
+        if (req.getCategory() != null) {
+            try {
+                book.changeCategory(BookCategory.valueOf(req.getCategory()));
+            } catch (IllegalArgumentException e) {
+                // 잘못된 카테고리 값 처리 (예: 예외 던지기 또는 무시)
+                throw new InvalidBookException("유효하지 않은 카테고리입니다.");
+            }
+        }
 
         // JPA 더티 체킹.
         return toResponse(book);
@@ -113,7 +123,7 @@ public class BookServiceImpl implements BookService {
                 .id(b.getId())
                 .publisher(b.getPublisher())
                 .isbn(b.getIsbn())
-                .category(b.getCategory())
+                .category(String.valueOf(b.getCategory()))
                 .title(b.getTitle())
                 .publicationDate(b.getPublicationDate())
                 .createdBy(b.getCreatedBy())
