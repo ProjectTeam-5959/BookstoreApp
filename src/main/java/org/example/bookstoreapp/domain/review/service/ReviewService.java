@@ -17,6 +17,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -61,6 +63,7 @@ public class ReviewService {
 
     // 리뷰 수정
     public ReviewResponse updateReview(
+            AuthUser authUser,
             Long reviewId,
             ReviewRequest reviewRequest
     ) {
@@ -68,17 +71,27 @@ public class ReviewService {
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW)
         );
 
+        if (!Objects.equals(review.getUser().getId(), authUser.getId())) {
+            throw new BusinessException(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW); // 예시 에러 코드
+        }
+
         review.updateReview(reviewRequest);
         return ReviewResponse.from(review);
     }
 
     // 리뷰 삭제 (soft delete 적용)
     public void deleteReview(
+            AuthUser authUser,
             Long reviewId
     ) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW)
         );
+
+        if (!Objects.equals(review.getUser().getId(), authUser.getId())) {
+            throw new BusinessException(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW); // 예시 에러 코드
+        }
+
         review.softDelete();
     }
 }

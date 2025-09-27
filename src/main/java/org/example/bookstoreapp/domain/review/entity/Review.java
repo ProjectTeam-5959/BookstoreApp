@@ -29,7 +29,7 @@ public class Review extends BaseEntity {
 
     // 책와 연관 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Book_id", nullable = false)
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
     public void updateReview(ReviewRequest reviewRequest) {
