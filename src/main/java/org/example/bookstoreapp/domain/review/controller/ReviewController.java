@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    // 리뷰 작성 - 인증인가 로직이 구현되었을 경우 userId 제거
+    // 리뷰 작성
     @PostMapping("/books/{bookId}/reviews")
     public ResponseEntity<ReviewResponse> createReview(
             @AuthenticationPrincipal AuthUser authUser,
