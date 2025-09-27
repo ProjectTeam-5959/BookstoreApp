@@ -81,21 +81,22 @@ public class Book extends BaseEntity {
         this.createdBy = createdBy;
     }
 
-    // 정합성 검증
-    private void validate(String publisher, String isbn, String category, String title) {
-        if (publisher == null || publisher.isBlank()) {
-            throw new InvalidBookException("출판사는 필수값입니다.");
-        }
-        if (isbn == null || isbn.isBlank()) {
-            throw new InvalidBookException("ISBN은 필수값입니다.");
-        }
-        if (category == null || category.isBlank()) {
-            throw new InvalidBookException("카테고리는 필수값입니다.");
-        }
-        if (title == null || title.isBlank()) {
-            throw new InvalidBookException("제목은 필수값입니다.");
-        }
-    }
+    /// todo ErrorCode 만들고, InvalidBookException 제거
+//    // 정합성 검증
+//    private void validate(String publisher, String isbn, String category, String title) {
+//        if (publisher == null || publisher.isBlank()) {
+//            throw new InvalidBookException("출판사는 필수값입니다.");
+//        }
+//        if (isbn == null || isbn.isBlank()) {
+//            throw new InvalidBookException("ISBN은 필수값입니다.");
+//        }
+//        if (category == null || category.isBlank()) {
+//            throw new InvalidBookException("카테고리는 필수값입니다.");
+//        }
+//        if (title == null || title.isBlank()) {
+//            throw new InvalidBookException("제목은 필수값입니다.");
+//        }
+//    }
 
     // 팩토리 메서드
     public static Book create(String publisher,
