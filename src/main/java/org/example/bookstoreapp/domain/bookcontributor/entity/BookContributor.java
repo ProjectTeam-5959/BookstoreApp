@@ -33,9 +33,9 @@ public class BookContributor extends BaseEntity {
     private ContributorRole role;
 
     @Builder
-    public BookContributor(Contributor contributor, Book book, ContributorRole role) {
-        this.contributor = contributor;
+    public BookContributor(Book book, Contributor contributor, ContributorRole role) {
         this.book = book;
+        this.contributor = contributor;
         this.role = role;
     }
 }

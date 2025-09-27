@@ -7,6 +7,8 @@ import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
 import org.example.bookstoreapp.domain.book.dto.BookResponse;
 import org.example.bookstoreapp.domain.book.dto.BookUpdateRequest;
 import org.example.bookstoreapp.domain.book.service.BookService;
+import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorRequest;
+import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -47,8 +49,7 @@ public class BookController {
      * * - 컨트롤러 메서드 파라미터로 선언 시 스프링이 자동 주입
      * * - URI 템플릿 변수 치환, 쿼리 파라미터 추가 등 지원
      * * - 주로 POST 요청 후 생성된 리소스의 URI를 Location 헤더에 포함할 때 사용
-     *
-     * */
+     */
 
     // 도서 단건 조회
     @GetMapping("/books/{bookId}")
@@ -92,5 +93,15 @@ public class BookController {
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id) {
         service.delete(id);
+    }
+
+    // 도서랑 기여자 연관관계 추가 - 병수,지나,현경의 작품!!!!
+    @PostMapping("/admin/books/{bookId}/contributors/{contributorId}")
+    public ResponseEntity<BookContributorResponse> linkContributor(
+            @PathVariable Long bookId,
+            @PathVariable Long contributorId,
+            @Valid @RequestBody BookContributorRequest request
+    ) {
+        return ResponseEntity.ok(service.linkContributor( bookId, contributorId, request));
     }
 }

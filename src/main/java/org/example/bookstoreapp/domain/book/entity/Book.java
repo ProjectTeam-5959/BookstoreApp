@@ -6,10 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.bookstoreapp.common.entity.BaseEntity;
-import org.example.bookstoreapp.domain.book.exception.InvalidBookException;
+import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorRequest;
 import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
 import org.example.bookstoreapp.domain.contributor.entity.Contributor;
-import org.example.bookstoreapp.domain.contributor.entity.ContributorRole;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,26 +33,15 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book")
     private final List<BookContributor> bookContributors = new ArrayList<>();
 
-    // 컬렉션 일치를 위한 연관관계 편의 메서드 - 양방향 동기화
-    // 해당 메서드 하나만으로 Book과 Contributor의 컬렉션을 모두 동기화
-    // -> 부모에 해당하는 Book과 Contributor 중 한 곳에서만 해당 메서드 작성하면 됨
-    public void addBookContributor(Contributor contributor, ContributorRole role) {
-        // Book과 Contributor의 중간 테이블 BookContributor 객체 생성
-        BookContributor bookContributor = new BookContributor(contributor, this, role);
-        // Book 컬렉션에 추가
-        bookContributors.add(bookContributor);
-        // 양방향 동기화 - Contributor 컬렉션에도 추가
-        contributor.getBookContributors().add(bookContributor);
-    }
-
     // 출판사명
     @Column(name = "publisher", nullable = false, length = 50)
     private String publisher;
 
     /**
      * 유니크 키 넣는 법 (2)
+     *
      * @Column(name = "isbn", nullable = false, length = 20, unique = true)
-     * */
+     */
     @Column(name = "isbn", nullable = false, length = 20, unique = true)
     private String isbn;                        // 하이픈(-) 포함 허용
 
