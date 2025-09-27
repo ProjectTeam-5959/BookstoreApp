@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleSystemException(Exception ex) {
         // 보안상 내부 에러 메시지를 그대로 노출하지 않도록 일반적인 메시지를 사용
+        // 로그에는 ex를 남기되, 응답은 일반화된 메시지로 처리
         String internalErrorMsg = "예상치 못한 서버 오류가 발생했습니다.";
 
         ApiResponse<?> errorResponse = ApiResponse.error(internalErrorMsg);
