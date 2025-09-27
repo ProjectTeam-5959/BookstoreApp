@@ -24,6 +24,5 @@ public class BookCreateRequest {
     @NotBlank @Size(max = 100)
     private String title;
 
-    @PastOrPresent
     private LocalDate publicationDate;      // 출판일 형식 : yyyy-MM-dd
 }
