@@ -31,6 +31,7 @@ public class BookServiceImpl implements BookService {
      * - 입력값이 null 또는 빈 값이면 해당 조건은 무시됨.
      * - 예: title + category만 검색 / category + publisher만 검색 가능.
      */
+    @Transactional(readOnly = true)
     public List<Book> searchBooks(String title, String category, String publisher) {
         // 기본 조건: titleContains
         Specification<Book> spec = BookSpecs.titleContains(title);
@@ -46,9 +47,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponse create(BookCreateRequest req) {
+    public BookResponse create(BookCreateRequest req, Long userId) {
         if (bookRepository.existsByIsbn(req.getIsbn())) {
-            throw new DataIntegrityViolationException("존재하지 않는 ISBN 입니다.");
+            throw new DataIntegrityViolationException("이미 존재하는 ISBN 입니다.");
         }
         Book book = Book.builder()
                 .publisher(req.getPublisher())
@@ -56,6 +57,7 @@ public class BookServiceImpl implements BookService {
                 .category(req.getCategory())
                 .title(req.getTitle())
                 .publicationDate(req.getPublicationDate())
+                .createdBy(userId)
                 .build();
         return toResponse(bookRepository.save(book));
     }
@@ -101,7 +103,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public void delete(Long id) {
         if (!bookRepository.existsById(id)) {
-            throw new EntityNotFoundException("Book not found: " + id);
+            throw new EntityNotFoundException("도서를 찾을 수 없습니다.");
         }
         bookRepository.deleteById(id);
     }
@@ -114,6 +116,7 @@ public class BookServiceImpl implements BookService {
                 .category(b.getCategory())
                 .title(b.getTitle())
                 .publicationDate(b.getPublicationDate())
+                .createdBy(b.getCreatedBy())
                 .createdAt(b.getCreatedAt())
                 .modifiedAt(b.getModifiedAt())
                 .build();

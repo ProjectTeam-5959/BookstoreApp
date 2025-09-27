@@ -21,8 +21,13 @@ public class Contributor extends BaseEntity {
     @Column(name = "author_name", nullable = false, length = 50)
     private String name;
 
+    // 도서 기여자 ID
+    @Column(name = "created_by", nullable = false, updatable = false)
+    private Long createdBy;
+
     @Builder
-    public Contributor(String name) {
+    public Contributor(String name, Long createdBy) {
         this.name = name;
+        this.createdBy = createdBy;
     }
 }
