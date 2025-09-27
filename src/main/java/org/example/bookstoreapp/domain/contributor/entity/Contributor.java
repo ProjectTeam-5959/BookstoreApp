@@ -23,7 +23,7 @@ public class Contributor extends BaseEntity {
 
     // 양방향 관계 설정
     // OneToMany는 기본적으로 fetch = FetchType.LAZY
-    @OneToMany(mappedBy = "contributors")
+    @OneToMany(mappedBy = "contributor")
     private final List<BookContributor> bookContributors = new ArrayList<>();
 
     // 기여자 이름
