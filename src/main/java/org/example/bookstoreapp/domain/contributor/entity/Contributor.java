@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.bookstoreapp.common.entity.BaseEntity;
+import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,6 +20,11 @@ public class Contributor extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // 양방향 관계 설정
+    // OneToMany는 기본적으로 fetch = FetchType.LAZY
+    @OneToMany(mappedBy = "contributor")
+    private final List<BookContributor> bookContributors = new ArrayList<>();
 
     // 작가 이름
     @Column(name = "author_name", nullable = false, length = 50)
