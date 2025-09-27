@@ -9,5 +9,5 @@ public class ReviewRequest {
 
     @NotBlank(message = "리뷰 내용을 입력해주세요.")
     @Size(max = 300, message = "리뷰는 최대 300자까지 작성 가능합니다.")
-    String content;
+    private String content;
 }
