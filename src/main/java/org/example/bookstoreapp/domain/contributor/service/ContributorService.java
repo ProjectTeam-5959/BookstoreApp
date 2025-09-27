@@ -14,10 +14,11 @@ public class ContributorService {
 
     private final ContributorRepository repo;
 
+    // todo 점검 : DB 자체 문제 (커넥션 끊김 등) → 500
     @Transactional
     public ContributorResponse create(ContributorCreateRequest req, Long userId) {
         Contributor saved = repo.save(Contributor.builder()
-                .name(req.getName())
+                .name(req.getName())    // todo 해결할 것 : 이름 중복 체크 및 DB 저장 중 제약 조건 위반 (name unique 등) → DataIntegrityViolationException → 500
                 .createdBy(userId)   // 기여자 ID 저장
                 .build());
 
