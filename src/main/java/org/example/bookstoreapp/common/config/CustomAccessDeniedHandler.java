@@ -26,6 +26,5 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         ApiResponse<Object> errorResponse = ApiResponse.error("접근 권한이 없습니다.");
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-        System.out.println(">>> AccessDeniedHandler triggered!");
     }
 }
