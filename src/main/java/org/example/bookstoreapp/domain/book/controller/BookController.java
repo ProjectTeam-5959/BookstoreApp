@@ -2,6 +2,7 @@ package org.example.bookstoreapp.domain.book.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
 import org.example.bookstoreapp.domain.book.dto.BookResponse;
 import org.example.bookstoreapp.domain.book.dto.BookUpdateRequest;
@@ -11,11 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class BookController {
 
@@ -24,11 +25,19 @@ public class BookController {
     // 도서 등록
     @PostMapping("/admin/books")
     public ResponseEntity<BookResponse> create(
+            @AuthenticationPrincipal AuthUser authUser,
             @Valid @RequestBody BookCreateRequest request,
             UriComponentsBuilder uriBuilder) {
-        BookResponse created = service.create(request);
+
+        BookResponse created = service.create(
+                request,
+                authUser.getId()
+        );
+
         return ResponseEntity.created(
-                uriBuilder.path("/api/admin/books").build(created.getId()) // 하드코딩은 피하는게??
+                uriBuilder.path("/api/admin/books/{id}")
+                        .buildAndExpand(created.getId())
+                        .toUri()
         ).body(created);
     }
 
@@ -42,13 +51,21 @@ public class BookController {
      * */
 
     // 도서 단건 조회
-    @GetMapping("/books/{bookid}")
-    public BookResponse get(@PathVariable Long id) {
+    @GetMapping("/books/{bookId}")
+    public BookResponse get(
+            @PathVariable Long id,
+            @PageableDefault(size = 20, sort = "id") Pageable pageable
+    ) {
         return service.get(id);
     }
 
     // 도서 검색
-    @GetMapping("/books?title=String&isbn=String&category=String&publisher=String&page=0&size=0&sort=created_at,desc")
+    @GetMapping("/books")
+    // 검색 조건: title, category, publisher, isbn
+    // 페이징: page, size
+    // 정렬: sort=createdAt,desc
+//    @GetMapping("/books?title=String&isbn=String&category=String&publisher=String&page=0&size=0&sort=created_at,desc")
+    // OpenAPI 스펙에 맞추기 위해 쿼리 파라미터로 받음
     public Page<BookResponse> search(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String category,
@@ -60,15 +77,20 @@ public class BookController {
     }
 
     // 도서 수정
-    @PatchMapping("/admin/books/{bookid}")
-    public BookResponse update(@PathVariable Long id, @Valid @RequestBody BookUpdateRequest request) {
+    @PatchMapping("/admin/books/{bookId}")
+    public BookResponse update(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id,
+            @Valid @RequestBody BookUpdateRequest request) {
         return service.update(id, request);
     }
 
     // 도서 삭제
-    @DeleteMapping("/admin/books/{bookid}")
+    @DeleteMapping("/admin/books/{bookId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id) {
         service.delete(id);
     }
 }
