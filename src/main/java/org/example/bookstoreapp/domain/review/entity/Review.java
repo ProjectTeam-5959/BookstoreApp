@@ -1,16 +1,18 @@
 package org.example.bookstoreapp.domain.review.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.bookstoreapp.common.entity.BaseEntity;
+import org.example.bookstoreapp.domain.book.entity.Book;
+import org.example.bookstoreapp.domain.review.dto.request.ReviewRequest;
+import org.example.bookstoreapp.domain.user.entity.User;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Table(name = "reviews")
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseEntity {
 
     @Id
@@ -21,19 +23,16 @@ public class Review extends BaseEntity {
     private String content;
 
     // 유저와 연관 관계
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     // 책와 연관 관계
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "Book_id", nullable = false)
-//    private Book book;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 
-    // 유저와 책 값 추가 예정
-    @Builder
-    public Review(Long id, String content) {
-        this.id = id;
-        this.content = content;
+    public void updateReview(ReviewRequest reviewRequest) {
+        this.content = reviewRequest.getContent();
     }
 }
