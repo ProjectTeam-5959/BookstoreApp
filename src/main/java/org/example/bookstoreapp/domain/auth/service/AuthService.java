@@ -48,9 +48,9 @@ public class AuthService {
 
     @Transactional
     public void withdraw(Long userId) {
-        userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new BusinessException(AuthErrorCode.USER_NOT_FOUND_BY_ID)
         );
-        userRepository.deleteById(userId);
+        user.softDelete();
     }
 }
