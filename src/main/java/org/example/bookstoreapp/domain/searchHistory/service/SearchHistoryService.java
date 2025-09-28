@@ -25,6 +25,7 @@ public class SearchHistoryService {
     private final SearchHistoryRepository searchHistoryRepository;
     private final UserRepository userRepository;
 
+    // 키워드 검색
     public Page<SearchResponse> searchKeyword(
             String title,
             String name,
@@ -90,5 +91,20 @@ public class SearchHistoryService {
                 book.getCategory(),
                 book.getCreatedAt()
         ));
+    }
+
+    // 인기 키워드 title별 조회
+    public Page<SearchHistoryRepository.PopularKeywordCount> searchPopularTitles(Pageable pageable) {
+        return searchHistoryRepository.findPopularTitles(pageable);
+    }
+
+    // 인기 키워드 name별 조회
+    public Page<SearchHistoryRepository.PopularKeywordCount> searchPopularNames(Pageable pageable) {
+        return searchHistoryRepository.findPopularNames(pageable);
+    }
+
+    // 인기 키워드 category별 조회
+    public Page<SearchHistoryRepository.PopularKeywordCount> searchPopularCategories(Pageable pageable) {
+        return searchHistoryRepository.findPopularCategories(pageable);
     }
 }

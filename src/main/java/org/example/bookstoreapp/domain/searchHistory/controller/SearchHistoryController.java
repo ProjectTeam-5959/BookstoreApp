@@ -5,6 +5,7 @@ import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.SearchResponse;
+import org.example.bookstoreapp.domain.searchHistory.repository.SearchHistoryRepository;
 import org.example.bookstoreapp.domain.searchHistory.service.SearchHistoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,9 +46,37 @@ public class SearchHistoryController {
         );
     }
 
-        // 내 검색 기록 조회
-        // @GetMapping
+    // 내 검색 기록 조회
+    // @GetMapping
 
-        // 인기 검색어 조회
-        // @GetMapping()
+    // 인기 키워드 조회
+    // 인기 키워드 title별 조회
+    @GetMapping("/popularKeywords/titles")
+    public ResponseEntity<ApiResponse<Page<SearchHistoryRepository.PopularKeywordCount>>> searchPopularTitles(
+            @PageableDefault(sort = "cnt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success("제목별 인기 검색순 조회 완료되었습니다", searchHistoryService.searchPopularTitles(pageable))
+        );
+    }
+
+    // 인기 키워드 name별 조회
+    @GetMapping("/popularKeywords/names")
+    public ResponseEntity<ApiResponse<Page<SearchHistoryRepository.PopularKeywordCount>>> searchPopularNames(
+            @PageableDefault(sort = "cnt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success("기여자별 인기 검색순 조회 완료되었습니다", searchHistoryService.searchPopularNames(pageable))
+        );
+    }
+
+    // 인기 키워드 category별 조회
+    @GetMapping("/popularKeywords/categories")
+    public ResponseEntity<ApiResponse<Page<SearchHistoryRepository.PopularKeywordCount>>> searchPopularCategories(
+            @PageableDefault(sort = "cnt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success("카테고리별 인기 검색순 조회 완료되었습니다", searchHistoryService.searchPopularCategories(pageable))
+        );
+    }
 }
