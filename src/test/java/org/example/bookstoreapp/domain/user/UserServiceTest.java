@@ -59,6 +59,7 @@ public class UserServiceTest {
         assertThat(userResponse.getNickname()).isEqualTo(NICKNAME);
         assertThat(userResponse.getUserRole()).isEqualTo(UserRole.ROLE_USER);
         assertThat(userResponse.getEmail()).isEqualTo(EMAIL);
+        then(userRepository).should(times(1)).findById(anyLong());
     }
 
     @Test
