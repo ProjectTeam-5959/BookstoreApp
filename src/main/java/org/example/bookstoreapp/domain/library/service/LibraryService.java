@@ -5,7 +5,6 @@ import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
-import org.example.bookstoreapp.domain.library.dto.response.LibraryBookResponse;
 import org.example.bookstoreapp.domain.library.dto.response.LibraryResponse;
 import org.example.bookstoreapp.domain.library.entity.Library;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
@@ -14,8 +13,6 @@ import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -42,30 +39,8 @@ public class LibraryService {
                 }
         );
 
-        // 서재에 담긴 책들 반환
-        List<LibraryBookResponse> bookResponses = library.getLibraryBooks().stream()
-                .map(libraryBooks -> {
-                    Book book = libraryBooks.getBook();
-
-                    // 작가 리스트 가져오기
-                    List<String> authors = book.getBookContributors().stream()
-                            .map(bookContributor -> bookContributor.getContributor().getName())
-                            .toList();
-
-                    // 책 + 작가 정보 반환
-                    return new LibraryBookResponse(
-                            book.getId(),
-                            book.getTitle(),
-                            authors,
-                            book.getPublisher(),
-                            book.getIsbn(),
-                            book.getPublicationDate(),
-                            libraryBooks.getAddedAt()
-                    );
-                })
-                .toList();
-
-        return new LibraryResponse(bookResponses);
+        // 정적 팩토리 메서드(from) 호출/반환
+        return LibraryResponse.from(library);
     }
 
     // 내 서재에 책 추가 //
@@ -92,7 +67,7 @@ public class LibraryService {
         LibraryBook libraryBook = LibraryBook.of(library, book);
         library.addBook(libraryBook);
 
-        libraryRepository.save(library);
+        // libraryRepository.save(library); 중복 코드 삭제 예정
 
         return LibraryResponse.from(library);
     }
