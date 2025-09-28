@@ -18,11 +18,12 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
     // 특정 ISBN 존재 여부 확인
     boolean existsByIsbn(String isbn);
 
+    // 키워드 검색
     @Query("""
             SELECT DISTINCT b
             FROM Book b
-            JOIN b.bookContributors bc
-            JOIN bc.contributor c
+            JOIN FETCH b.bookContributors bc
+            JOIN FETCH bc.contributor c
             WHERE (:title IS NULL OR LOWER(b.title) LIKE CONCAT('%', LOWER(:title), '%'))
             AND (:name IS NULL OR LOWER(c.name) LIKE CONCAT('%', LOWER(:name), '%'))
             AND (:category IS NULL OR b.category = :category)
