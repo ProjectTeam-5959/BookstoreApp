@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.bookstoreapp.common.SoftDelete;
 import org.example.bookstoreapp.domain.book.entity.Book;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
@@ -22,7 +24,10 @@ import java.time.LocalDateTime;
                 @UniqueConstraint(columnNames = {"library_id", "book_id"})
       }
 )
-public class LibraryBook {
+// delete = false 만 조회!
+// @Where(clause = "deleted = false")는 지원 중단으로 사용 불가
+@SQLRestriction("deleted = false")
+public class LibraryBook extends SoftDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
