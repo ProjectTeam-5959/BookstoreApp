@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
 
+    Page<SearchHistory> findByUserId(Long userId, Pageable pageable);
+
     // 인기 키워드 title별 조회
     @Query("""
             SELECT sh.title AS keyword, COUNT(sh.title) AS cnt
@@ -37,6 +39,7 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
         ORDER BY COUNT(sh.category) DESC
         """)    // 내림차순 정렬 고정
     Page<PopularKeywordCount> findPopularCategories(Pageable pageable);
+
 
     interface PopularKeywordCount {
         String getKeyword();

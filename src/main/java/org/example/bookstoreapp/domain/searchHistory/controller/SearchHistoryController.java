@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
+import org.example.bookstoreapp.domain.searchHistory.dto.response.MySearchHistoryResponse;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.SearchResponse;
 import org.example.bookstoreapp.domain.searchHistory.repository.SearchHistoryRepository;
 import org.example.bookstoreapp.domain.searchHistory.service.SearchHistoryService;
@@ -14,7 +15,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,8 +50,17 @@ public class SearchHistoryController {
         );
     }
 
-    // 내 검색 기록 조회
-    // @GetMapping
+    // 나의 검색어 기록 조회
+     @GetMapping("/history")
+     public ResponseEntity<ApiResponse<Page<MySearchHistoryResponse>>> MySearchHistory(
+             @AuthenticationPrincipal AuthUser authUser,
+             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+     ) {
+        Page<MySearchHistoryResponse> histories = searchHistoryService.mySearchHistory(authUser.getId(), pageable);
+        return ResponseEntity.ok(
+                ApiResponse.success("조회가 완료되었습니다.", histories)
+        );
+     }
 
     // 인기 키워드 조회
     // 인기 키워드 title별 조회

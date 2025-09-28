@@ -7,6 +7,7 @@ import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.contributor.dto.SearchContributorResponse;
+import org.example.bookstoreapp.domain.searchHistory.dto.response.MySearchHistoryResponse;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.SearchResponse;
 import org.example.bookstoreapp.domain.searchHistory.entity.SearchHistory;
 import org.example.bookstoreapp.domain.searchHistory.exception.enums.SearchErrorCode;
@@ -16,6 +17,7 @@ import org.example.bookstoreapp.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class SearchHistoryService {
     private final UserRepository userRepository;
 
     // 키워드 검색
+    @Transactional
     public Page<SearchResponse> searchKeyword(
             String title,
             String name,
@@ -93,17 +96,28 @@ public class SearchHistoryService {
         ));
     }
 
+    // 나의 검색어 기록 조회
+    @Transactional(readOnly = true)
+    public Page<MySearchHistoryResponse> mySearchHistory(Long userId, Pageable pageable) {
+        return searchHistoryRepository.findByUserId(userId, pageable)
+                .map(MySearchHistoryResponse::from
+                );
+    }
+
     // 인기 키워드 title별 조회
+    @Transactional(readOnly = true)
     public Page<SearchHistoryRepository.PopularKeywordCount> searchPopularTitles(Pageable pageable) {
         return searchHistoryRepository.findPopularTitles(pageable);
     }
 
     // 인기 키워드 name별 조회
+    @Transactional(readOnly = true)
     public Page<SearchHistoryRepository.PopularKeywordCount> searchPopularNames(Pageable pageable) {
         return searchHistoryRepository.findPopularNames(pageable);
     }
 
     // 인기 키워드 category별 조회
+    @Transactional(readOnly = true)
     public Page<SearchHistoryRepository.PopularKeywordCount> searchPopularCategories(Pageable pageable) {
         return searchHistoryRepository.findPopularCategories(pageable);
     }
