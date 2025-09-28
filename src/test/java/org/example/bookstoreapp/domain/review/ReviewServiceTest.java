@@ -140,4 +140,26 @@ public class ReviewServiceTest {
         assertEquals("1번 째 리뷰", result.getContent().get(0).getContent());
     }
 
+    @Test
+    @DisplayName("리뷰 수정 성공 테스트")
+    void updateReview_success() {
+        // given
+        ReviewRequest reviewRequest = new ReviewRequest();
+        ReflectionTestUtils.setField(reviewRequest, "content", "test-newContent");
+
+        review = Review.builder()
+                .id(1L)
+                .content("oldContent")
+                .user(user)
+                .book(book)
+                .build();
+
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
+
+        // when
+        ReviewResponse reviewResponse = reviewService.updateReview(authUser, review.getId(), reviewRequest);
+
+        // then
+        assertEquals("test-newContent", reviewResponse.getContent());
+    }
 }
