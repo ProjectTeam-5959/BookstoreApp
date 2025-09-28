@@ -1,6 +1,7 @@
 package org.example.bookstoreapp.domain.library.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
@@ -8,6 +9,7 @@ import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
 import org.example.bookstoreapp.domain.library.dto.response.LibraryResponse;
 import org.example.bookstoreapp.domain.library.entity.Library;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
+import org.example.bookstoreapp.domain.library.exception.LibraryErrorCode;
 import org.example.bookstoreapp.domain.library.repository.LibraryRepository;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
@@ -33,7 +35,7 @@ public class LibraryService {
         Library library = libraryRepository.findByUserId(authUser.getId()).orElseGet(
                 () -> {
                     User user = userRepository.findById(authUser.getId()).orElseThrow(
-                            () -> new IllegalArgumentException("서재가 존재하지 않습니다.")
+                            () -> new BusinessException(LibraryErrorCode.NOT_FOUND_LIBRARY)
                     );
                     return libraryRepository.save(Library.of(user));
                 }
@@ -52,7 +54,7 @@ public class LibraryService {
         Library library = libraryRepository.findByUserId(authUser.getId()).orElseGet(
                 () -> {
                     User user = userRepository.findById(authUser.getId()).orElseThrow(
-                            () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+                            () -> new BusinessException(LibraryErrorCode.NOT_FOUND_USER)
                     );
                     return libraryRepository.save(Library.of(user));
                 }
@@ -60,7 +62,7 @@ public class LibraryService {
 
         // 추가 할 책 가져오기
         Book book = bookRepository.findById(addBookRequest.bookId()).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 책이 없습니다.")
+                () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK)
         );
 
         // LibraryBook 생성해서 책 등록
@@ -77,7 +79,7 @@ public class LibraryService {
 
         // 서재 가져오기
         Library library = libraryRepository.findByUserId(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("서재가 존재하지 않습니다.")
+                () -> new BusinessException(LibraryErrorCode.NOT_FOUND_LIBRARY)
         );
 
         // 편의 메서드 호출
