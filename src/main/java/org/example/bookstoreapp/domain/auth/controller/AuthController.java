@@ -7,6 +7,7 @@ import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.auth.dto.request.SigninRequest;
 import org.example.bookstoreapp.domain.auth.dto.request.SignupRequest;
 import org.example.bookstoreapp.domain.auth.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,8 @@ public class AuthController {
     @PostMapping("/auth/signup")
     public ResponseEntity<ApiResponse<String>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         String bearerToken = authService.signup(signupRequest);
-        return ResponseEntity.ok(
-                ApiResponse.success("회원가입이 완료되었습니다.", bearerToken)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.success("회원가입이 완료되었습니다.", bearerToken));
     }
 
     @PostMapping("/auth/login")
@@ -35,7 +35,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/withdraw/me")
-    public ResponseEntity<ApiResponse<String>> withdraw(
+    public ResponseEntity<ApiResponse<Void>> withdraw(
             @AuthenticationPrincipal AuthUser authUser
     ) {
         authService.withdraw(authUser.getId());
