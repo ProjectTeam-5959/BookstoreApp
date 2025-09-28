@@ -21,8 +21,6 @@ public class LibraryResponse {
 
         // Library에 연결된 LibraryBook 목록 가져오기
         List<LibraryBookResponse> bookResponses = library.getLibraryBooks().stream()
-                // 삭제 안 된 것만 가능하게 조건 추가
-                .filter(libraryBook -> !libraryBook.isDeleted())
                 // 각각의 LibraryBook 에 대해 연결된 책 꺼냄
                 .map(libraryBook -> {
                     Book book = libraryBook.getBook();
