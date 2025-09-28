@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/auth")).permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/admin")).hasAuthority(UserRole.Authority.ADMIN)
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/search")).permitAll()    // 비로그인 유저도 책 검색 가능
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
