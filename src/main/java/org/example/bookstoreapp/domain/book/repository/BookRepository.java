@@ -23,9 +23,9 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
             FROM Book b
             JOIN b.bookContributors bc
             JOIN bc.contributor c
-            WHERE (:title IS NULL OR b.title LIKE CONCAT('%', :title, '%'))
+            WHERE (:title IS NULL OR LOWER(b.title) LIKE CONCAT('%', LOWER(:title), '%'))
+            AND (:name IS NULL OR LOWER(c.name) LIKE CONCAT('%', LOWER(:name), '%'))
             AND (:category IS NULL OR b.category = :category)
-            AND (:name IS NULL OR c.name LIKE CONCAT('%', :name, '%'))
             """)
     Page<Book> findBooksByKeyword(
             @Param("title") String title,
