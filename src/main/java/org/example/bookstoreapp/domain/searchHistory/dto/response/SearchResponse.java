@@ -1,6 +1,7 @@
 package org.example.bookstoreapp.domain.searchHistory.dto.response;
 
 import lombok.Getter;
+import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.contributor.dto.SearchContributorResponse;
 
 import java.time.LocalDateTime;
@@ -12,14 +13,14 @@ public class SearchResponse {
     private final Long id;
     private final String title;
     private final List<SearchContributorResponse> contributors;
-    private final String category;
+    private final BookCategory category;
     private final LocalDateTime createdAt;
 
     public SearchResponse(
             Long id,
             String title,
             List<SearchContributorResponse> contributors,
-            String category,
+            BookCategory category,
             LocalDateTime createdAt
     ) {
         this.id = id;

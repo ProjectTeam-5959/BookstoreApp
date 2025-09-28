@@ -87,7 +87,7 @@ public class SearchHistoryService {
                                 .role(bookContributor.getRole())
                                 .build()
                         ).toList(),
-                book.getCategory().name(),
+                book.getCategory(),
                 book.getCreatedAt()
         ));
     }
