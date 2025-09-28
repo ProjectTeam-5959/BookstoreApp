@@ -1,11 +1,13 @@
 package org.example.bookstoreapp.domain.review;
 
+import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.review.dto.request.ReviewRequest;
 import org.example.bookstoreapp.domain.review.dto.response.ReviewResponse;
 import org.example.bookstoreapp.domain.review.entity.Review;
+import org.example.bookstoreapp.domain.review.exception.ReviewErrorCode;
 import org.example.bookstoreapp.domain.review.repository.ReviewRepository;
 import org.example.bookstoreapp.domain.review.service.ReviewService;
 import org.example.bookstoreapp.domain.user.entity.User;
@@ -30,8 +32,7 @@ import java.util.Optional;
 
 import static org.example.bookstoreapp.domain.book.entity.BookCategory.NOVEL;
 import static org.example.bookstoreapp.domain.user.enums.UserRole.ROLE_ADMIN;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -91,6 +92,24 @@ public class ReviewServiceTest {
         assertEquals("test-content", reviewResponse.getContent()); // 리뷰 내용만 검증 할 수 있다...
         assertEquals(user, captor.getValue().getUser());
         assertEquals(book, captor.getValue().getBook());
+    }
+
+    @Test
+    @DisplayName("리뷰 등록 실패 테스트 - 도서가 존재하지 않을 때")
+    void createReview_fail_bookNotFound() {
+        // given
+        ReviewRequest reviewRequest = new ReviewRequest();
+        ReflectionTestUtils.setField(reviewRequest, "content", "test-content");
+
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user)); // 유저는 존재
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.empty()); // 도서는 존재하지 않음.
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () ->
+                reviewService.createReview(authUser, book.getId(), reviewRequest)
+        );
+
+        assertEquals(ReviewErrorCode.NOT_FOUND_BOOK, exception.getErrorCode());
     }
 
     @Test
