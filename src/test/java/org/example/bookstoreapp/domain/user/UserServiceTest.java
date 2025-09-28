@@ -64,7 +64,9 @@ public class UserServiceTest {
     }
 
     @Test
-    void changeNicknameAndPassword_성공한다() {}
+    void changeNicknameAndPassword_성공한다() {
+
+    }
 
     @Test
     void changeNicknameAndPassword_새비밀번호형식이_올바르지않으면_INVALID_PASSWORD_FORMAT_예외() {}
