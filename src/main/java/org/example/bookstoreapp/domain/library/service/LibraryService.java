@@ -35,7 +35,7 @@ public class LibraryService {
         Library library = libraryRepository.findByUserId(authUser.getId()).orElseGet(
                 () -> {
                     User user = userRepository.findById(authUser.getId()).orElseThrow(
-                            () -> new BusinessException(LibraryErrorCode.NOT_FOUND_LIBRARY)
+                            () -> new BusinessException(LibraryErrorCode.NOT_FOUND_USER)
                     );
                     return libraryRepository.save(Library.of(user));
                 }
