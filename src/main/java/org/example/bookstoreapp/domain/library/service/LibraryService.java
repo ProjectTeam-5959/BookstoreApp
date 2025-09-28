@@ -69,8 +69,6 @@ public class LibraryService {
         LibraryBook libraryBook = LibraryBook.of(library, book);
         library.addBook(libraryBook);
 
-        // libraryRepository.save(library); 중복 코드 삭제 예정
-
         return LibraryResponse.from(library);
     }
 
