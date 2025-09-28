@@ -64,6 +64,7 @@ public class ReviewServiceTest {
         ReflectionTestUtils.setField(user, "id", 1L);
 
         book = Book.create("교보", "111111111111", NOVEL, "test", LocalDate.parse("2025-09-01"), 1L);
+        ReflectionTestUtils.setField(book, "id", 1L);
     }
 
     @Test
@@ -89,7 +90,7 @@ public class ReviewServiceTest {
         // then
         ArgumentCaptor<Review> captor = ArgumentCaptor.forClass(Review.class);
         verify(reviewRepository).save(captor.capture());
-        assertEquals("test-content", reviewResponse.getContent()); // 리뷰 내용만 검증 할 수 있다...
+        assertEquals("test-content", reviewResponse.getContent());
         assertEquals(user, captor.getValue().getUser());
         assertEquals(book, captor.getValue().getBook());
     }
