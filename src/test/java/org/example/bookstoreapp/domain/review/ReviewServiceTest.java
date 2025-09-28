@@ -160,6 +160,21 @@ public class ReviewServiceTest {
     }
 
     @Test
+    @DisplayName("리뷰 조회 테스트 2 - 리뷰가 없는 경우")
+    void getReviews_returnEmptyList() {
+        // given
+        Slice<Review> emptySlice = new SliceImpl<>(List.of()); // 빈 리스트
+        when(reviewRepository.findByUserId(authUser.getId(), Pageable.unpaged())).thenReturn(emptySlice);
+
+        // when
+        Slice<ReviewResponse> result = reviewService.getReviews(authUser, Pageable.unpaged());
+
+        // then
+        // 리뷰가 없을 때 빈 리스트가 잘 반환되는지 검증
+        assertEquals(0, result.getContent().size());
+    }
+
+    @Test
     @DisplayName("리뷰 수정 성공 테스트")
     void updateReview_success() {
         // given
