@@ -44,4 +44,16 @@ public class SearchHistory extends BaseEntity {
         this.category = category;
         this.user = user;
     }
+
+    // 라이프사이클 콜백
+    // 신규 저장 시
+    @PrePersist
+    public void convertEmptyStringToNUll() {
+        if (title != null && title.isBlank()) {
+            title = null;
+        }
+        if (name != null && name.isBlank()) {
+            name = null;
+        }
+    }
 }
