@@ -162,4 +162,24 @@ public class ReviewServiceTest {
         // then
         assertEquals("test-newContent", reviewResponse.getContent());
     }
+
+    @Test
+    @DisplayName("리뷰 삭제 성공 테스트 - soft delete")
+    void deleteReview_success() {
+        // given
+        review = Review.builder()
+                .id(1L)
+                .content("test-content")
+                .user(user)
+                .book(book)
+                .build();
+
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
+
+        // when
+        reviewService.deleteReview(authUser, review.getId());
+
+        // then
+        assertTrue(review.isDeleted()); // softDelete를 사용했기 때문에 삭제 되었다면 true
+    }
 }
