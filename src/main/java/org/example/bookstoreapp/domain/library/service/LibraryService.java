@@ -25,14 +25,11 @@ public class LibraryService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
 
-    // 내 서재 조회 //
-    // 1회 서재 생성 로직 포함되므로 readOnly = true 불가
-    public LibraryResponse getMyLibrary(AuthUser authUser) {
-
-        // 내 서재 가져오기 + 서재 생성(최초 1회만)
-        // findByUserId -> Optional! => 있으면 Library 반환 / 없으면 orElseGet 구문 실행되어 서재 생성
-        // orElseGet : 값이 비어 있을 때만 실행되는 대체 로직
-        Library library = libraryRepository.findByUserId(authUser.getId()).orElseGet(
+    // 중복 로직 메서드 - 내 서재 가져오기 + 서재 생성(최초 1회)
+    // findByUserId -> Optional! => 있으면 Library 반환 / 없으면 orElseGet 구문 실행되어 서재 생성
+    // orElseGet : 값이 비어 있을 때만 실행되는 대체 로직
+    private Library getLibraryOrCreate(AuthUser authUser) {
+        return libraryRepository.findByUserId(authUser.getId()).orElseGet(
                 () -> {
                     User user = userRepository.findById(authUser.getId()).orElseThrow(
                             () -> new BusinessException(LibraryErrorCode.NOT_FOUND_USER)
@@ -40,6 +37,14 @@ public class LibraryService {
                     return libraryRepository.save(Library.of(user));
                 }
         );
+    }
+
+    // 내 서재 조회 //
+    // 1회 서재 생성 로직 포함되므로 readOnly = true 불가
+    public LibraryResponse getMyLibrary(AuthUser authUser) {
+
+        // 내 서재 가져오기(+ 최초 1회만 내 서재 생성)
+        Library library = getLibraryOrCreate(authUser);
 
         // 정적 팩토리 메서드(from) 호출/반환
         return LibraryResponse.from(library);
@@ -48,17 +53,8 @@ public class LibraryService {
     // 내 서재에 책 추가 //
     public LibraryResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
 
-        // 내 서재 가져오기
-        // 책 단건 조회 후 책 추가 시, 내 서재 생성(최초 1회)
-        // 내 서재 조회 없이 바로 책 추가 가능!
-        Library library = libraryRepository.findByUserId(authUser.getId()).orElseGet(
-                () -> {
-                    User user = userRepository.findById(authUser.getId()).orElseThrow(
-                            () -> new BusinessException(LibraryErrorCode.NOT_FOUND_USER)
-                    );
-                    return libraryRepository.save(Library.of(user));
-                }
-        );
+        // 내 서재 가져오기(+ 최초 1회만 내 서재 생성)
+        Library library = getLibraryOrCreate(authUser);
 
         // 추가 할 책 가져오기
         Book book = bookRepository.findById(addBookRequest.bookId()).orElseThrow(
