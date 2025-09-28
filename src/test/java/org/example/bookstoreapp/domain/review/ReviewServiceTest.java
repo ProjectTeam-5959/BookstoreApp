@@ -196,7 +196,7 @@ public class ReviewServiceTest {
         // then
         assertEquals("test-newContent", reviewResponse.getContent());
     }
-    
+
     @Test
     @DisplayName("리뷰 수정 실패 테스트 - 작성자가 다를 경우")
     void updateReview_fail() {
@@ -250,5 +250,31 @@ public class ReviewServiceTest {
 
         // then
         assertTrue(review.isDeleted()); // softDelete를 사용했기 때문에 삭제 되었다면 true
+    }
+
+    @Test
+    @DisplayName("리뷰 삭제 실패 테스트 - 작성자가 다를 경우")
+    void deleteReview_fail() {
+        // given
+        user = User.of("테스터", "test@example.com", ROLE_ADMIN, "테스터입니다.", "Admin1234!!");
+        ReflectionTestUtils.setField(authUser, "id", 2L);
+
+        review = Review.builder()
+                .id(1L)
+                .content("oldContent")
+                .user(user)
+                .book(book)
+                .build();
+
+        // when
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
+
+        // then
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> reviewService.deleteReview(authUser, review.getId())
+        );
+
+        assertEquals(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW, exception.getErrorCode());
     }
 }
