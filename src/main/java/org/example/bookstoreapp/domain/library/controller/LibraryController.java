@@ -9,10 +9,7 @@ import org.example.bookstoreapp.domain.library.service.LibraryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,5 +38,17 @@ public class LibraryController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success("내 서재에 책을 추가했습니다.", response));
+    }
+
+    // 내 서재에서 책 삭제 //
+    @DeleteMapping("/v1/libraries/{bookId}")
+    public ResponseEntity<ApiResponse<Void>> deleteBookMyLibrary(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long bookId
+    ){
+      libraryService.deleteBookLibrary(authUser, bookId);
+
+      return ResponseEntity.status(HttpStatus.OK)
+              .body(ApiResponse.success("내 서재에서 책을 삭제했습니다.", null));
     }
 }

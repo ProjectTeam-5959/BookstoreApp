@@ -96,4 +96,16 @@ public class LibraryService {
 
         return LibraryResponse.from(library);
     }
+
+    // 내 서재에 책 삭제 //
+    public void deleteBookLibrary(AuthUser authUser, Long bookId) {
+
+        // 서재 가져오기
+        Library library = libraryRepository.findByUserId(authUser.getId()).orElseThrow(
+                () -> new IllegalArgumentException("서재가 존재하지 않습니다.")
+        );
+
+        // 편의 메서드 호출
+        library.removeBook(bookId);
+    }
 }

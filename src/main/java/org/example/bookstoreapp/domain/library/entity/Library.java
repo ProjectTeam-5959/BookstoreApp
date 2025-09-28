@@ -44,5 +44,23 @@ public class Library {
         // 부모(library) 컬렉션에 추가
         libraryBooks.add(libraryBook);
     }
+
+    // 편의 메서드 : 내 서재에 책 삭제
+    public void removeBook(Long bookId) {
+        // 해당 책 찾아오기
+        LibraryBook libraryBook = this.libraryBooks.stream()
+                // 내 서재에서 요청받은 bookId 에 해당하는 책만 선택
+                .filter(book -> book.getBook().getId().equals(bookId))
+                // filter 로 걸러진 결과 중 첫 번째 요소만 꺼냄
+                // findFirst() 자체의 반환 타입이 Optional<LibraryBook>
+                .findFirst()
+                // 만약 findFirst()가 비어있으면 예외 던짐
+                .orElseThrow(
+                        () -> new IllegalArgumentException("서재에 해당하는 책이 없습니다.")
+                );
+
+        // soft delete 적용
+        libraryBook.softDelete();
+    }
 }
 
