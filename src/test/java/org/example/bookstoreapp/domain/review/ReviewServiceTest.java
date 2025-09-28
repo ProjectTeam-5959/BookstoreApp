@@ -196,6 +196,41 @@ public class ReviewServiceTest {
         // then
         assertEquals("test-newContent", reviewResponse.getContent());
     }
+    
+    @Test
+    @DisplayName("리뷰 수정 실패 테스트 - 작성자가 다를 경우")
+    void updateReview_fail() {
+        // given
+        ReviewRequest reviewRequest = new ReviewRequest();
+        ReflectionTestUtils.setField(reviewRequest, "content", "test-newContent");
+
+        user = User.of(
+                "테스터",
+                "test@example.com",
+                ROLE_ADMIN,
+                "테스터입니다.",
+                "Admin1234!!"
+        );
+
+        ReflectionTestUtils.setField(authUser, "id", 2L);
+
+        review = Review.builder()
+                .id(1L)
+                .content("oldContent")
+                .user(user)
+                .book(book)
+                .build();
+
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
+
+        // when & then
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> reviewService.updateReview(authUser, review.getId(), reviewRequest)
+        );
+
+        assertEquals(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW, exception.getErrorCode());
+    }
 
     @Test
     @DisplayName("리뷰 삭제 성공 테스트 - soft delete")
