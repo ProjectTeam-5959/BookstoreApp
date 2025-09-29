@@ -41,6 +41,10 @@ public class ReviewService {
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_BOOK)
         );
 
+        if (book.isDeleted()) {
+            throw new BusinessException(ReviewErrorCode.NOT_FOUND_BOOK);
+        }
+
         Review review = Review.builder()
                 .content(reviewRequest.getContent())
                 .user(user)
@@ -53,6 +57,9 @@ public class ReviewService {
     }
 
     // 로그인 유저를 기준으로 리뷰 전체 조회 - 현재 offset 기반의 페이지네이션 적용 추후 Cursor 기반의 페이지네이션 적용 고려!
+    /**
+     * Todo : 책이 삭제되었거나 삭제된 유저라면 softDelete - true로 변환되고 출력 X
+     */
     @Transactional(readOnly = true)
     public Slice<ReviewResponse> getReviews(
             AuthUser authUser,
