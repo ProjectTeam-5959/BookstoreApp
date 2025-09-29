@@ -129,13 +129,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponse update(Long id, BookUpdateRequest req) {
-        Book book = bookRepository.findById(id).orElseThrow(() ->
+    public BookResponse update(Long bookId, BookUpdateRequest req) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() ->
                 // todo 해결할 것 : id가 null이면 오류 발생, findById에서 못 찾으면 → EntityNotFoundException → 500.
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
 
-        if (req.getIsbn() != null && !req.getIsbn().equals(book.getIsbn())) {
+        if (req.getIsbn() != null) {
+            if(req.getIsbn().equals(book.getIsbn())){
+                throw new BusinessException(BookErrorCode.INVALID_ISBN);
+            }
             if (bookRepository.existsByIsbn(req.getIsbn())) {
                 // todo 해결할 것 : DB 조회 과정에서 오류가 나면 500, ISBN 중복 검사 시 → DataIntegrityViolationException → 500.
                 throw new BusinessException(BookErrorCode.DUPLICATE_ISBN); // 409 Conflict
