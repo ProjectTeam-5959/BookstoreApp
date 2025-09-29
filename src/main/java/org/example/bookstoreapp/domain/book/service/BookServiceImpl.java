@@ -2,11 +2,12 @@ package org.example.bookstoreapp.domain.book.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.exception.BusinessException;
+import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
 import org.example.bookstoreapp.domain.book.dto.BookResponse;
+import org.example.bookstoreapp.domain.book.dto.BookSingleResponse;
 import org.example.bookstoreapp.domain.book.dto.BookUpdateRequest;
 import org.example.bookstoreapp.domain.book.entity.Book;
-import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.book.exception.BookErrorCode;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.book.repository.BookSpecs;
@@ -16,14 +17,18 @@ import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorRespon
 import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
 import org.example.bookstoreapp.domain.contributor.entity.Contributor;
 import org.example.bookstoreapp.domain.contributor.repository.ContributorRepository;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.example.bookstoreapp.domain.review.dto.response.ReviewResponse;
+import org.example.bookstoreapp.domain.review.entity.Review;
+import org.example.bookstoreapp.domain.review.repository.ReviewRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final ContributorRepository contributorRepository;
     private final BookContributorRepository bookContributorRepository;
+    private final ReviewRepository reviewRepository;
 
     /**
      * 도서 검색 서비스 메서드
@@ -63,18 +69,11 @@ public class BookServiceImpl implements BookService {
             // 비즈니스 규칙: 중복 → 409
             throw new BusinessException(BookErrorCode.DUPLICATE_ISBN);
         }
-        BookCategory category;
-        try {
-            category = BookCategory.valueOf(req.getCategory());
-        } catch (IllegalArgumentException e) {
-            // 비즈니스 규칙: 잘못된 카테고리 → 400
-            throw new BusinessException(BookErrorCode.INVALID_CATEGORY);
-        }
 
         Book book = Book.builder()
                 .publisher(req.getPublisher())
                 .isbn(req.getIsbn())
-                .category(category)
+                .category(req.getCategory())
                 .title(req.getTitle())
                 .publicationDate(req.getPublicationDate())
                 .createdBy(userId)
@@ -85,13 +84,34 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public BookResponse get(Long id) {
-        // todo 해결할 것 : id가 null이면 오류 발생, EntityNotFoundException 발생 시, 별도의 @ExceptionHandler 설정 없으면 500 반환.
+    public BookSingleResponse get(Long id, Pageable pageable) {
+        // todo 해결할 것 : id가 null이면 오류 발생, EntityNotFoundException 발생 시, 별도의 @ExceptionHandler 설정 없으면 500 반환. 리뷰리스트 추가
         Book book = bookRepository.findById(id).orElseThrow(() ->
                 // 비즈니스 규칙: 없음 → 404 (기존 EntityNotFoundException → 500 방지)
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
-        return toResponse(book);
+
+        /**
+         * 이미 삭제된 데이터라면? 예외처리
+         */
+        if (book.isDeleted()) {
+            throw new BusinessException(BookErrorCode.BOOK_NOT_FOUND);
+        }
+        // 도서에 달린 리뷰 조회
+        Slice<Review> reviews = reviewRepository.findByBookId(book.getId(), pageable);
+
+        return new BookSingleResponse(
+                book.getId(),
+                book.getPublisher(),
+                book.getIsbn(),
+                book.getCategory(),
+                book.getTitle(),
+                book.getPublicationDate(),
+                book.getCreatedBy(),
+                book.getCreatedAt(),
+                book.getModifiedAt(),
+                reviews.map(ReviewResponse::from)
+        );
     }
 
     @Transactional(readOnly = true)
@@ -123,20 +143,17 @@ public class BookServiceImpl implements BookService {
             book.changeIsbn(req.getIsbn());
         }
         if (req.getPublisher() != null)
-            book.changePublisher(req.getPublisher()
-            );
+            book.changePublisher(req.getPublisher());
 
         if (req.getTitle() != null)
-            book.changeTitle(req.getTitle()
-            );
+            book.changeTitle(req.getTitle());
 
         if (req.getPublicationDate() != null)
-            book.changePublicationDate(req.getPublicationDate()
-            );
+            book.changePublicationDate(req.getPublicationDate());
 
         if (req.getCategory() != null) {
             try {
-                book.changeCategory(BookCategory.valueOf(req.getCategory()));
+                book.changeCategory(req.getCategory());
             } catch (IllegalArgumentException e) {
                 // 잘못된 카테고리 값 처리 (예: 예외 던지기 또는 무시)
                 // todo 해결할 것 : enum 값이 잘못되면 IllegalArgumentException 발생(대안은 try-catch), 잘못된 카테고리 값 들어오면 → InvalidBookException → 500.
@@ -149,18 +166,24 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void delete(Long id) {
-        if (!bookRepository.existsById(id)) {
-            // todo 해결할 것 : id가 null이면 오류 발생, DB 조회 과정에서 존재하지 않으면 EntityNotFoundException → 500
-            throw new BusinessException(BookErrorCode.BOOK_NOT_FOUND); // 404 not found
+    public void delete(AuthUser authUser, Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(
+                () -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
+        );
+
+        /**
+         * 이미 삭제된 데이터라면? 예외처리
+         */
+        if (book.isDeleted()) {
+            throw new BusinessException(BookErrorCode.BOOK_NOT_FOUND);
         }
-        // todo 해결할 것 : id가 null이면 오류 발생, DB 삭제 과정에서 오류 발생 시 500, DB delete 중 제약 조건(예: 외래키) 위반되면 DataIntegrityViolationException → 500
-        try {
-            bookRepository.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            // 비즈니스 규칙: FK 등 제약으로 삭제 불가 → 409 conflict
+
+        // 만약 책을 등록한 관리자의 아이디와 책을 등록한 관리자가 다르다면 예외처리 -> 일단 관리자끼리도 구분할 필요가 있을 지는 고민해보자!
+        if (!Objects.equals(book.getCreatedBy(), authUser.getId())) {
             throw new BusinessException(BookErrorCode.DELETE_CONFLICT);
         }
+
+        book.softDelete(); // softDelete 적용
     }
 
     private BookResponse toResponse(Book b) {

@@ -1,7 +1,9 @@
 package org.example.bookstoreapp.domain.book.service;
 
+import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
 import org.example.bookstoreapp.domain.book.dto.BookResponse;
+import org.example.bookstoreapp.domain.book.dto.BookSingleResponse;
 import org.example.bookstoreapp.domain.book.dto.BookUpdateRequest;
 import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorRequest;
 import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorResponse;
@@ -13,8 +15,8 @@ public interface BookService {
             BookCreateRequest request, Long userId
     );
 
-    BookResponse get(
-            Long id
+    BookSingleResponse get(
+            Long id, Pageable pageable
     );
 
     Page<BookResponse> search(
@@ -26,6 +28,7 @@ public interface BookService {
     );
 
     void delete(
+            AuthUser authUser,
             Long id
     );
 
