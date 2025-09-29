@@ -176,7 +176,6 @@ public class UserServiceTest {
     @Test
     void changeNicknameAndPassword_기존비밀번호가_틀리면_PASSWORD_MISMATCH_예외() {
         String oldPassword = "oldPassword1!";
-        String dummyHashedPassword = "dummy_hashed_password1";
 
         User user = User.of(NICKNAME,EMAIL,UserRole.ROLE_USER,NAME,HASHED_PASSWORD);
         UserChangeNameAndPasswordRequest request = new UserChangeNameAndPasswordRequest("닉네임",oldPassword,"newPassword1!");
