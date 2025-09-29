@@ -11,6 +11,7 @@ public enum BookErrorCode implements ErrorCode {
     INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "유효하지 않은 카테고리입니다."),
     INVALID_SEARCH_CATEGORY(HttpStatus.BAD_REQUEST, "유효하지 않은 카테고리 검색값입니다."),
     CONTRIBUTOR_NOT_FOUND(HttpStatus.NOT_FOUND, "도서를 찾을 수 없습니다."),
+    FORBIDDEN_ACCESS_BOOK(HttpStatus.FORBIDDEN, "삭제할 권한이 없습니다."),
 
 
     // 기여자 소프트 딜리트 관련
