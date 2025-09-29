@@ -52,7 +52,7 @@ public class SearchHistoryController {
 
     // 나의 검색어 기록 조회
      @GetMapping("/history")
-     public ResponseEntity<ApiResponse<Page<MySearchHistoryResponse>>> MySearchHistory(
+     public ResponseEntity<ApiResponse<Page<MySearchHistoryResponse>>> mySearchHistory(
              @AuthenticationPrincipal AuthUser authUser,
              @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
      ) {
