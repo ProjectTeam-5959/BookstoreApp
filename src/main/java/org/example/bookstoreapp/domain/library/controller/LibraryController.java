@@ -41,7 +41,7 @@ public class LibraryController {
     }
 
     // 내 서재에서 책 삭제 //
-    @DeleteMapping("/v1/libraries/{bookId}")
+    @DeleteMapping("/v1/library/books/{bookId}")
     public ResponseEntity<ApiResponse<Void>> deleteBookMyLibrary(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long bookId
