@@ -53,6 +53,7 @@ public class ReviewService {
     }
 
     // 로그인 유저를 기준으로 리뷰 전체 조회 - 현재 offset 기반의 페이지네이션 적용 추후 Cursor 기반의 페이지네이션 적용 고려!
+    @Transactional(readOnly = true)
     public Slice<ReviewResponse> getReviews(
             AuthUser authUser,
             Pageable pageable

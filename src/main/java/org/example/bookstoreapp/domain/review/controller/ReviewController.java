@@ -2,6 +2,7 @@ package org.example.bookstoreapp.domain.review.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.review.dto.request.ReviewRequest;
 import org.example.bookstoreapp.domain.review.dto.response.ReviewResponse;
@@ -23,40 +24,43 @@ public class ReviewController {
 
     // 리뷰 작성
     @PostMapping("/books/{bookId}/reviews")
-    public ResponseEntity<ReviewResponse> createReview(
+    public ResponseEntity<ApiResponse<ReviewResponse>> createReview(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long bookId,
             @Valid @RequestBody ReviewRequest reviewRequest
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(authUser, bookId, reviewRequest));
+        ReviewResponse response = reviewService.createReview(authUser, bookId, reviewRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("리뷰 작성 완료", response));
     }
 
     // 로그인 유저를 기준으로 리뷰 전체 조회
     @GetMapping("/reviews")
-    public ResponseEntity<Slice<ReviewResponse>> getReviews(
+    public ResponseEntity<ApiResponse<Slice<ReviewResponse>>> getReviews(
             @AuthenticationPrincipal AuthUser authUser,
             @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ResponseEntity.ok(reviewService.getReviews(authUser, pageable));
+        Slice<ReviewResponse> reviews = reviewService.getReviews(authUser, pageable);
+        return ResponseEntity.ok(ApiResponse.success("리뷰 조회 완료", reviews));
     }
 
     // 리뷰 수정
     @PutMapping("/reviews/{reviewId}")
-    public ResponseEntity<ReviewResponse> updateReview(
+    public ResponseEntity<ApiResponse<ReviewResponse>> updateReview(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long reviewId,
             @Valid @RequestBody ReviewRequest reviewRequest
     ) {
-        return ResponseEntity.ok(reviewService.updateReview(authUser, reviewId, reviewRequest));
+        ReviewResponse response = reviewService.updateReview(authUser, reviewId, reviewRequest);
+        return ResponseEntity.ok(ApiResponse.success("리뷰 수정 완료", response));
     }
 
     // 리뷰 삭제
     @DeleteMapping("/reviews/{reviewId}")
-    public ResponseEntity<Void> deleteReview(
+    public ResponseEntity<ApiResponse<Void>> deleteReview(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long reviewId
     ) {
         reviewService.deleteReview(authUser, reviewId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("리뷰 삭제 완료"));
     }
 }
