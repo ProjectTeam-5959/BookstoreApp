@@ -19,9 +19,17 @@ public class BookResponse {
     private LocalDateTime modifiedAt;
 
     @Builder
-    private BookResponse(Long id,
-                         String publisher, String isbn, String category, String title, Long createdBy,
-                         LocalDate publicationDate, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    private BookResponse(
+            Long id,
+            String publisher,
+            String isbn,
+            String category,
+            String title,
+            Long createdBy,
+            LocalDate publicationDate,
+            LocalDateTime createdAt,
+            LocalDateTime modifiedAt
+    ) {
         this.id = id;
         this.publisher = publisher;
         this.isbn = isbn;

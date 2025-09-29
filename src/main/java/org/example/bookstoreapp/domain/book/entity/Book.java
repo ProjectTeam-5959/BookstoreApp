@@ -6,9 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.bookstoreapp.common.entity.BaseEntity;
-import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorRequest;
 import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
-import org.example.bookstoreapp.domain.contributor.entity.Contributor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
