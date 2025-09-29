@@ -180,7 +180,7 @@ public class BookServiceImpl implements BookService {
 
         // 만약 책을 등록한 관리자의 아이디와 책을 등록한 관리자가 다르다면 예외처리 -> 일단 관리자끼리도 구분할 필요가 있을 지는 고민해보자!
         if (!Objects.equals(book.getCreatedBy(), authUser.getId())) {
-            throw new BusinessException(BookErrorCode.DELETE_CONFLICT);
+            throw new BusinessException(BookErrorCode.FORBIDDEN_ACCESS_BOOK);
         }
 
         book.softDelete(); // softDelete 적용
