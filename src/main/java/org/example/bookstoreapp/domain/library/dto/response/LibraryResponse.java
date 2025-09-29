@@ -36,9 +36,6 @@ public class LibraryResponse {
                             book.getId(),
                             book.getTitle(),
                             authors,
-                            book.getPublisher(),
-                            book.getIsbn(),
-                            book.getPublicationDate(),
                             libraryBook.getAddedAt()
                     );
                 })
