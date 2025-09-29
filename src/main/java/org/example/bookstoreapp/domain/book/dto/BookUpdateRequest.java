@@ -1,9 +1,11 @@
 package org.example.bookstoreapp.domain.book.dto;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.bookstoreapp.domain.book.entity.BookCategory;
 
 import java.time.LocalDate;
 
@@ -16,12 +18,12 @@ public class BookUpdateRequest {
     @Size(min = 10, max = 20)
     private String isbn; // 변경 시에도 유니크 검증 필요
 
-    @Size(max = 30)
-    private String category;
+    @NotNull
+    private BookCategory category;
 
     @Size(max = 100)
     private String title;
 
-    @PastOrPresent
+    @PastOrPresent // 이거 뭔지 모르겠다..
     private LocalDate publicationDate;
 }
