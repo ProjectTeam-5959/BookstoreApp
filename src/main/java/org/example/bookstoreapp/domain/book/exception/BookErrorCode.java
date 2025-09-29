@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum BookErrorCode implements ErrorCode {
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "도서를 찾을 수 없습니다."),
     DUPLICATE_ISBN(HttpStatus.CONFLICT, "이미 존재하는 ISBN 입니다."),
+    INVALID_ISBN(HttpStatus.BAD_REQUEST,"같은 값의 ISBN입니다. 새로운 ISBN을 입력해주세요."),
     INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "유효하지 않은 카테고리입니다."),
     INVALID_SEARCH_CATEGORY(HttpStatus.BAD_REQUEST, "유효하지 않은 카테고리 검색값입니다."),
     CONTRIBUTOR_NOT_FOUND(HttpStatus.NOT_FOUND, "도서를 찾을 수 없습니다."),
