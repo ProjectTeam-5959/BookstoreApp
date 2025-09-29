@@ -10,7 +10,6 @@ import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import java.time.LocalDate;
 
 @Getter
-@NoArgsConstructor
 public class BookCreateRequest {
 
     @NotBlank

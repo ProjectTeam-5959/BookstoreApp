@@ -1,5 +1,6 @@
 package org.example.bookstoreapp.domain.book.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
@@ -10,7 +11,6 @@ import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import java.time.LocalDate;
 
 @Getter
-@NoArgsConstructor
 public class BookUpdateRequest {
     @Size(max = 50)
     private String publisher;
@@ -18,12 +18,10 @@ public class BookUpdateRequest {
     @Size(min = 10, max = 20)
     private String isbn; // 변경 시에도 유니크 검증 필요
 
-    @NotNull
     private BookCategory category;
 
     @Size(max = 100)
     private String title;
 
-    @PastOrPresent // 이거 뭔지 모르겠다..
     private LocalDate publicationDate;
 }

@@ -82,7 +82,6 @@ public class BookController {
     // 도서 수정
     @PatchMapping("/admin/books/{bookId}")
     public ResponseEntity<ApiResponse<BookResponse>> update(
-            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long bookId,
             @Valid @RequestBody BookUpdateRequest request) {
         return ResponseEntity.ok(ApiResponse.success("해당 도서의 정보를 수정했습니다.", service.update(bookId, request)));
