@@ -48,7 +48,7 @@ public class SearchHistory extends BaseEntity {
     // 라이프사이클 콜백
     // 신규 저장 시
     @PrePersist
-    public void convertEmptyStringToNUll() {
+    public void convertEmptyStringToNull() {
         if (title != null && title.isBlank()) {
             title = null;
         }
