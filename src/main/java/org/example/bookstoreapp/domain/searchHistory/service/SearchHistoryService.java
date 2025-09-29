@@ -56,30 +56,24 @@ public class SearchHistoryService {
         }
 
         // 3. 검색 기록 저장(비로그인 유저도 포함)
-        if (authUser != null) {
-            User user = userRepository.findById(authUser.getId()).orElseThrow(
-                    () -> new IllegalStateException("인증된 사용자를 찾을 수 없습니다."));
-            SearchHistory searchHistory = new SearchHistory(
-                    title,
-                    name,
-                    category,
-                    user
-            );
+        User user;
 
-            searchHistoryRepository.save(searchHistory);
+        if (authUser != null) {
+            user = userRepository.findById(authUser.getId()).orElseThrow(
+                    () -> new IllegalStateException("인증된 사용자를 찾을 수 없습니다."));
 
         } else {
             // 로그인 안 한 경우 -> 유저 없이 저장
-            SearchHistory searchHistory = new SearchHistory(
-                    title,
-                    name,
-                    category,
-                    null
-            );
-
-            searchHistoryRepository.save(searchHistory);
+            user = null;
 
         }
+        SearchHistory searchHistory = new SearchHistory(
+                title,
+                name,
+                category,
+                user
+        );
+        searchHistoryRepository.save(searchHistory);
 
         return books.map(book -> new SearchResponse(
                 book.getId(),
