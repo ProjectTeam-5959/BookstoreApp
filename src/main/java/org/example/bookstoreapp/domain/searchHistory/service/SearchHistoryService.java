@@ -66,7 +66,7 @@ public class SearchHistoryService {
 
         if (authUser != null) {
             user = userRepository.findById(authUser.getId()).orElseThrow(
-                    () -> new IllegalStateException("인증된 사용자를 찾을 수 없습니다."));
+                    () -> new BusinessException(SearchErrorCode.UNAUTHORIZED));
 
         } else {
             // 로그인 안 한 경우 -> 유저 없이 저장
@@ -98,9 +98,9 @@ public class SearchHistoryService {
 
     // 나의 검색어 기록 조회
     @Transactional(readOnly = true)
-    public Page<MySearchHistoryResponse> mySearchHistory(Long userId, Pageable pageable) {
-        return searchHistoryRepository.findByUserId(userId, pageable)
-                .map(MySearchHistoryResponse::from
+    public Page<MySearchHistoryResponse> mySearchHistory(AuthUser authUser, Pageable pageable) {
+        return searchHistoryRepository.findByUserId(authUser.getId(), pageable)
+                .map(searchHistory -> MySearchHistoryResponse.from(searchHistory)
                 );
     }
 
@@ -171,6 +171,4 @@ public class SearchHistoryService {
 
         return dtos;
     }
-    // 인기 검색어 기반 도서 Top10
-//    @Transactional(readOnly = true)
 }
