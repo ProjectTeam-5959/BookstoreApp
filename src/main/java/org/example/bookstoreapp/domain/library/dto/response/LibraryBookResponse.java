@@ -3,13 +3,10 @@ package org.example.bookstoreapp.domain.library.dto.response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreapp.domain.book.entity.Book;
-import org.example.bookstoreapp.domain.contributor.entity.ContributorRole;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,18 +18,12 @@ public class LibraryBookResponse {
     private final LocalDateTime addedAt;
 
     // 정적 팩토리 메서드
-    public static LibraryBookResponse from(LibraryBook libraryBook) {
-
-        Book book = libraryBook.getBook();
-
-        List<String> authors = book.getBookContributors().stream()
-                .filter(bookContributor -> bookContributor.getRole() == ContributorRole.AUTHOR)
-                .map(bookContributor -> bookContributor.getContributor().getName())
-                .collect(Collectors.toList());
+    // LibraryBook + 저자 리스트 → LibraryBookResponse 로 변환
+    public static LibraryBookResponse of(LibraryBook libraryBook, List<String> authors) {
 
         return new LibraryBookResponse(
-                book.getId(),
-                book.getTitle(),
+                libraryBook.getBook().getId(),
+                libraryBook.getBook().getTitle(),
                 authors,
                 libraryBook.getAddedAt()
         );
