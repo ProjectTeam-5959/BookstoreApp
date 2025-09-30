@@ -58,7 +58,7 @@ public class SearchHistoryController1 {
             @AuthenticationPrincipal AuthUser authUser,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<MySearchHistoryResponse> histories = searchHistoryService.mySearchHistory(authUser.getId(), pageable);
+        Page<MySearchHistoryResponse> histories = searchHistoryService.mySearchHistory(authUser, pageable);
         return ResponseEntity.ok(
                 ApiResponse.success("조회가 완료되었습니다.", histories)
         );
