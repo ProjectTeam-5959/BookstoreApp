@@ -1,6 +1,6 @@
 package org.example.bookstoreapp.config;
 
-import org.example.bookstoreapp.common.config.JwtAuthenticationToken;
+import org.example.bookstoreapp.common.security.JwtAuthenticationToken;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
