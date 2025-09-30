@@ -27,6 +27,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
@@ -57,17 +58,13 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public BookSingleResponse get(Long id, Pageable pageable) {
-        Book book = bookRepository.findById(id).orElseThrow(() ->
+    public BookSingleResponse get(Long id, Long lastReviewId, LocalDateTime lastModifiedAt, int size) {
+        Book book = bookRepository.findByIdAndDeletedFalse(id).orElseThrow(() ->
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND)     // 예외 규칙: 없음 → 404 (기존 EntityNotFoundException → 500 방지)
         );
 
-        /** 이미 삭제된 데이터라면? 예외처리 */
-        if (book.isDeleted()) {
-            throw new BusinessException(BookErrorCode.BOOK_NOT_FOUND);
-        }
         // 도서에 달린 리뷰 조회
-        Slice<Review> reviews = reviewRepository.findByBookId(book.getId(), pageable);
+        Slice<Review> reviews = reviewRepository.findByBookId(book.getId(), lastReviewId, lastModifiedAt, size);
 
         return new BookSingleResponse(
                 book.getId(),
@@ -100,7 +97,7 @@ public class BookService {
         );
 
         if (req.getIsbn() != null) {
-            if(req.getIsbn().equals(book.getIsbn())){
+            if (req.getIsbn().equals(book.getIsbn())) {
                 throw new BusinessException(BookErrorCode.INVALID_ISBN);
             }
             if (bookRepository.existsByIsbn(req.getIsbn())) {

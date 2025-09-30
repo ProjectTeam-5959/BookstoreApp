@@ -51,6 +51,9 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
             @Param("category") BookCategory category,
             Pageable pageable
     );
+
+    // 삭제되지 않은 도서 조회
+    Optional<Book> findByIdAndDeletedFalse(Long id);
 }
 
 /**
