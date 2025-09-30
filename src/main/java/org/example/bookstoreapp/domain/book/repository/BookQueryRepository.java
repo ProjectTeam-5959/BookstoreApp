@@ -60,8 +60,8 @@ public class BookQueryRepository {
         List<Long> top10BookIds = queryFactory
                 .select(book.id)
                 .from(book)
-                .leftJoin(book.bookContributors, bc)
-                .leftJoin(bc.contributor, c)
+                .join(book.bookContributors, bc)
+                .join(bc.contributor, c)
                 .orderBy(score.desc())
                 .limit(10)
                 .fetch();
