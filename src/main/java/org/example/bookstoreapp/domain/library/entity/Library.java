@@ -20,7 +20,7 @@ public class Library {
     private Long id;
 
     // 유저 1명당 서재 1개
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)  // 추가
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
