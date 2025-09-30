@@ -43,6 +43,8 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    testImplementation 'com.h2database:h2'
+
     // QueryDSL JPA
     implementation "io.github.openfeign.querydsl:querydsl-jpa:7.0"
     annotationProcessor "io.github.openfeign.querydsl:querydsl-apt:7.0:jpa"
