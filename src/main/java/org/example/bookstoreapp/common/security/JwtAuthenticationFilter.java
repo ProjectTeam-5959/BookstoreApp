@@ -1,4 +1,4 @@
-package org.example.bookstoreapp.common.config;
+package org.example.bookstoreapp.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;

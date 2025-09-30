@@ -1,7 +1,7 @@
 package org.example.bookstoreapp.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreapp.common.config.JwtUtil;
+import org.example.bookstoreapp.common.security.JwtUtil;
 import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.request.SigninRequest;
 import org.example.bookstoreapp.domain.auth.dto.request.SignupRequest;

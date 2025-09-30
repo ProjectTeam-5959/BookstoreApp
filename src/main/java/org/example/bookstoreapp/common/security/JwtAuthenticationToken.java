@@ -1,4 +1,4 @@
-package org.example.bookstoreapp.common.config;
+package org.example.bookstoreapp.common.security;
 
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

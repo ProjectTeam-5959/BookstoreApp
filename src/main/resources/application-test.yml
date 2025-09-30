@@ -1,4 +1,0 @@
-# 테스트 환경 전용 설정
-jwt:
-  secret:
-    key: "dGVzdC1zZWNyZXQta2V5LTEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MA==" # 테스트용으로 Base64 인코딩된 키
