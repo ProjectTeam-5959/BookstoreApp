@@ -7,7 +7,6 @@ import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
 import org.example.bookstoreapp.domain.library.dto.response.LibraryBookResponse;
-import org.example.bookstoreapp.domain.library.dto.response.LibraryResponse;
 import org.example.bookstoreapp.domain.library.entity.Library;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
 import org.example.bookstoreapp.domain.library.exception.LibraryErrorCode;
@@ -58,35 +57,27 @@ public class LibraryService {
     }
 
     // 내 서재에 책 추가 //
-    public LibraryResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
+    public LibraryBookResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
 
-        // 내 서재 가져오기(+ 최초 1회만 내 서재 생성)
         Library library = getLibraryOrCreate(authUser);
 
-        // 추가할 책 가져오기
         Book book = bookRepository.findById(addBookRequest.bookId()).orElseThrow(
                 () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK)
         );
 
-        // 기존 LibraryBook 에서 책 찾기 (삭제 포함)
         LibraryBook libraryBook = libraryBookRepository.findEvenDeleted(library.getId(), book.getId());
 
-        // null 일 때 책 생성
         if (libraryBook == null) {
             libraryBook = LibraryBook.of(library, book);
-        // 삭제된 책 복구 (deleted = false) -> 삭제된 책도 등록 가능!
         } else if (libraryBook.isDeleted()) {
             libraryBook.restore();
-        // 중복 에러 처리(409)
         } else {
             throw new BusinessException(LibraryErrorCode.ALREADY_EXIST_BOOK);
         }
 
-        // 책 추가
-        // 이 과정이 없으면 테이블에 반영 안됨
         library.addBook(libraryBook);
 
-        return LibraryResponse.from(library);
+        return  LibraryBookResponse.from(libraryBook);
     }
 
     // 내 서재에 책 삭제 //
