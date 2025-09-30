@@ -1,4 +1,4 @@
-package org.example.bookstoreapp.common.config;
+package org.example.bookstoreapp.common.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
