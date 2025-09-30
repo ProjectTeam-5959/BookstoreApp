@@ -137,6 +137,11 @@ public class BookService {
             throw new BusinessException(BookErrorCode.FORBIDDEN_ACCESS_BOOK);
         }
 
+        int deletedReviewCount = reviewRepository.softDeleteByBookId(id);
+
+        // 잘 적용된 건지 확인하기 위해!
+        System.out.println("삭제된 리뷰의 개수: " + deletedReviewCount);
+
         // softDelete 적용
         book.softDelete();
     }
