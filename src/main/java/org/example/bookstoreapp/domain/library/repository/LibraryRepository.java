@@ -11,7 +11,6 @@ LibraryRepository extends JpaRepository<Library, Long> {
 
     @Query("SELECT DISTINCT l FROM Library l " +
             "LEFT JOIN FETCH l.libraryBooks lb " +
-            "LEFT JOIN FETCH lb.book b " +
             "WHERE l.user.id = :userId")
     Optional<Library> findByUserId(Long userId);
 }
