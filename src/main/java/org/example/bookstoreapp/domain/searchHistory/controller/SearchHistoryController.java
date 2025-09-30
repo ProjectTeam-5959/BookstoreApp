@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/search")
@@ -90,6 +92,17 @@ public class SearchHistoryController {
     ) {
         return ResponseEntity.ok(
                 ApiResponse.success("카테고리별 인기 검색순 조회 완료되었습니다", searchHistoryService.searchPopularCategories(pageable))
+        );
+    }
+
+    // 나의 검색어 기반 도서 Top10
+    @GetMapping("/history/popular/top10")
+    public ResponseEntity<ApiResponse<List<SearchResponse>>> searchTop10BooksByMySearchHistory(
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        List<SearchResponse> dtos = searchHistoryService.searchTop10BooksByMySearchHistory(authUser);
+        return ResponseEntity.ok(
+                ApiResponse.success("검색어 기반 추천 도서 Top 10 조회입니다.", dtos)
         );
     }
 }

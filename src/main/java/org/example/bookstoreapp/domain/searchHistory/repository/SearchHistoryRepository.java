@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
 
     Page<SearchHistory> findByUserId(Long userId, Pageable pageable);
@@ -40,6 +42,7 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
         """)    // 내림차순 정렬 고정
     Page<PopularKeywordCount> findPopularCategories(Pageable pageable);
 
+    List<SearchHistory> findAllByUserId(Long userId);
 
     interface PopularKeywordCount {
         String getKeyword();
