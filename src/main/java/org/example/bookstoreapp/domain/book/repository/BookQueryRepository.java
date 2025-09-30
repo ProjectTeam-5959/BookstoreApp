@@ -12,6 +12,7 @@ import org.example.bookstoreapp.domain.contributor.entity.QContributor;
 import org.example.bookstoreapp.domain.searchHistory.entity.SearchHistory;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -55,14 +56,27 @@ public class BookQueryRepository {
             }
         }
 
-        // fetch join 포함 Top10 조회 → N+1 방지
+        // Top 10 Book ID 먼저 조회 (DB에서 limit 적용)
+        List<Long> top10BookIds = queryFactory
+                .select(book.id)
+                .from(book)
+                .leftJoin(book.bookContributors, bc)
+                .leftJoin(bc.contributor, c)
+                .orderBy(score.desc())
+                .limit(10)
+                .fetch();
+
+        if (top10BookIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // fetch join으로 연관 엔티티 포함하여 최종 조회
         return queryFactory
                 .selectFrom(book)
                 .distinct()
                 .join(book.bookContributors, bc).fetchJoin()
                 .join(bc.contributor, c).fetchJoin()
-                .orderBy(score.desc())
-                .limit(10)
+                .where(book.id.in(top10BookIds))
                 .fetch();
     }
 }
