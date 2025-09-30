@@ -1,11 +1,10 @@
-package org.example.bookstoreapp.common.security;
+package org.example.bookstoreapp.config;
 
-import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.config.CustomAccessDeniedHandler;
+import org.example.bookstoreapp.common.security.JwtAuthenticationFilter;
 import org.example.bookstoreapp.domain.user.enums.UserRole;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,14 +15,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 
-@Profile("!test")
-@Configuration
-@RequiredArgsConstructor
+@TestConfiguration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
-public class SecurityConfig {
+public class TestSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public TestSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,9 +45,9 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/auth")).permitAll()
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/admin")).hasAuthority(UserRole.Authority.ADMIN)
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/search")).permitAll()    // 비로그인 유저도 책 검색 가능
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/auth")).permitAll()
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/admin")).hasAuthority(UserRole.Authority.ADMIN)
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/v1/search")).permitAll()    // 비로그인 유저도 책 검색 가능
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
