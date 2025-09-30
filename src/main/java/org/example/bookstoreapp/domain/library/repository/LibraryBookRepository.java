@@ -20,5 +20,11 @@ public interface LibraryBookRepository extends JpaRepository<LibraryBook, Long> 
     LibraryBook findEvenDeleted(Long libraryId, Long bookId);
 
     // 무한스크롤 적용 (서재 조회)
+    // 책 조회 N+1 해결
+    @Query(
+            "SELECT lb " +
+            "FROM LibraryBook lb " +
+            "JOIN FETCH lb.book b " +
+            "WHERE lb.library.id = :libraryId")
     Slice<LibraryBook> findByLibraryId(Long libraryId, Pageable pageable);
 }
