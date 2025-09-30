@@ -4,15 +4,19 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.bookstoreapp.common.entity.BaseEntity;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.user.entity.User;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "searchhistories")
-public class SearchHistory extends BaseEntity {
+public class SearchHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +36,10 @@ public class SearchHistory extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")    // 로그인 안 한 경우 null 허용
     private User user;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     public SearchHistory(
             String title,
