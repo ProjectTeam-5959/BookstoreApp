@@ -5,6 +5,7 @@ import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
 import org.example.bookstoreapp.domain.library.dto.response.LibraryBookResponse;
+import org.example.bookstoreapp.domain.library.dto.response.LibraryBookSimpleResponse;
 import org.example.bookstoreapp.domain.library.service.LibraryService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -41,11 +42,11 @@ public class LibraryController {
     // 내 서재에 책 등록 //
     // 등록 시 해당 책 정보만 반환
     @PostMapping("/v1/libraries")
-    public ResponseEntity<ApiResponse<LibraryBookResponse>> addBookLibrary(
+    public ResponseEntity<ApiResponse<LibraryBookSimpleResponse>> addBookLibrary(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody AddBookRequest addBookRequest
     ) {
-        LibraryBookResponse response = libraryService.addBookLibrary(authUser, addBookRequest);
+        LibraryBookSimpleResponse response = libraryService.addBookLibrary(authUser, addBookRequest);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success("내 서재에 책을 추가했습니다.", response));

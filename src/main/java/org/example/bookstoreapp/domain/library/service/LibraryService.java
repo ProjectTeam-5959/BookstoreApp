@@ -7,6 +7,7 @@ import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
 import org.example.bookstoreapp.domain.library.dto.response.LibraryBookResponse;
+import org.example.bookstoreapp.domain.library.dto.response.LibraryBookSimpleResponse;
 import org.example.bookstoreapp.domain.library.entity.Library;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
 import org.example.bookstoreapp.domain.library.exception.LibraryErrorCode;
@@ -57,7 +58,7 @@ public class LibraryService {
     }
 
     // 내 서재에 책 추가 //
-    public LibraryBookResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
+    public LibraryBookSimpleResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
 
         Library library = getLibraryOrCreate(authUser);
 
@@ -77,7 +78,7 @@ public class LibraryService {
 
         library.addBook(libraryBook);
 
-        return  LibraryBookResponse.from(libraryBook);
+        return  LibraryBookSimpleResponse.from(libraryBook);
     }
 
     // 내 서재에 책 삭제 //
