@@ -142,17 +142,11 @@ public class LibraryService {
                 () -> new BusinessException(LibraryErrorCode.NOT_FOUND_LIBRARY)
         );
 
-        // 해당 책 가져오기
-        LibraryBook libBook = library.getLibraryBooks().stream()
-                .filter(libraryBook -> libraryBook.getBook().getId().equals(bookId))
-                // 위 경우 타입 : Stream<LibraryBook>
-                // findFirst() 역할 : 첫 번째 요소 꺼내 Optional<LibraryBook> 로 반환
-                // orElseThrow 가능해짐! (없으면 타입 불일치로 불가능!)
-                .findFirst()
-                .orElseThrow(
-                        () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK_IN_LIBRARY)
-                );
+        // 특정 LibraryBook 바로 조회
+        LibraryBook libraryBook = libraryBookRepository.findByLibraryIdAndBookId(library.getId(), bookId).orElseThrow(
+                () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK_IN_LIBRARY)
+        );
 
-        libBook.softDelete();
+        libraryBook.softDelete();
     }
 }
