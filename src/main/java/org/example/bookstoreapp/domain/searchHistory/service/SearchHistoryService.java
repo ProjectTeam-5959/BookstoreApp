@@ -6,6 +6,7 @@ import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
+import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
 import org.example.bookstoreapp.domain.contributor.dto.SearchContributorResponse;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.MySearchHistoryResponse;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.SearchResponse;
@@ -15,9 +16,13 @@ import org.example.bookstoreapp.domain.searchHistory.repository.SearchHistoryRep
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -115,4 +120,45 @@ public class SearchHistoryService {
     public Page<SearchHistoryRepository.PopularKeywordCount> searchPopularCategories(Pageable pageable) {
         return searchHistoryRepository.findPopularCategories(pageable);
     }
+
+    // 나의 검색어 기반 도서 Top10
+    @Transactional(readOnly = true)
+    public List<SearchResponse> searchTop10BooksByMySearchHistory(AuthUser authUser) {
+        List<SearchHistory> histories = searchHistoryRepository.findAllByUserId(authUser.getId());
+        List<SearchResponse> dtos = new ArrayList<>();
+
+        for (SearchHistory searchHistory : histories) {
+            String title = searchHistory.getTitle();
+            String name = searchHistory.getName();
+            BookCategory category = searchHistory.getCategory();
+
+            List<Book> books = bookRepository.findTop10BooksByMySearchHistory(
+                    title,
+                    name,
+                    category,
+                    PageRequest.of(0, 10)
+            );    // Top10 고정
+
+            for (Book book : books) {
+                List<SearchContributorResponse> searchContributors = new ArrayList<>();
+                for (BookContributor bookContributor : book.getBookContributors()) {
+                    searchContributors.add(SearchContributorResponse.from(bookContributor.getContributor(), bookContributor.getRole()));
+                }
+
+                dtos.add(new SearchResponse(
+                        book.getId(),
+                        book.getTitle(),
+                        searchContributors,
+                        book.getCategory(),
+                        book.getCreatedAt()
+                ));
+            }
+        }
+
+        return dtos;
+
+    }
+
+    // 인기 검색어 기반 도서 Top10
+//    @Transactional(readOnly = true)
 }

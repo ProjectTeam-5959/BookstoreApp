@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificationExecutor<Book> {
@@ -33,6 +34,23 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
             @Param("name") String name,
             @Param("category") BookCategory category,
             Pageable pageable);
+
+    // 나의 검색어 기반 도서 Top10
+    @Query("""
+            SELECT DISTINCT b
+            FROM Book b
+            JOIN FETCH b.bookContributors bc
+            JOIN FETCH bc.contributor c
+            WHERE (:title IS NULL OR LOWER(b.title) LIKE CONCAT('%', LOWER(:title), '%'))
+            AND (:name IS NULL OR LOWER(c.name) LIKE CONCAT('%', LOWER(:name), '%'))
+            AND (:category IS NULL OR b.category = :category)
+            """)
+    List<Book> findTop10BooksByMySearchHistory(
+            @Param("title") String title,
+            @Param("name") String name,
+            @Param("category") BookCategory category,
+            Pageable pageable
+    );
 }
 
 /**
