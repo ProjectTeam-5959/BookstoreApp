@@ -1,7 +1,6 @@
 package org.example.bookstoreapp.common.security;
 
 import lombok.RequiredArgsConstructor;
-import org.example.bookstoreapp.common.config.CustomAccessDeniedHandler;
 import org.example.bookstoreapp.domain.user.enums.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

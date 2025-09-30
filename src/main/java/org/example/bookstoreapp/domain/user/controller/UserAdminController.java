@@ -28,7 +28,7 @@ public class UserAdminController {
         );
     }
 
-
+//Todo:위치 고려해보기.
     @GetMapping("/admin/test")
     public void test(@AuthenticationPrincipal AuthUser authUser) {
         log.info("User ID: {}", authUser.getId());
