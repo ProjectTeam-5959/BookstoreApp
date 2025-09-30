@@ -18,13 +18,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/v1/libraries")
 public class LibraryController {
 
     private final LibraryService libraryService;
 
     // 내 서재 조회 + 내 서재 생성(1회만)//
-    // 무한스크롤 적용
-    @GetMapping("/v1/libraries")
+    // - offset 방식 (page, size 기반)
+    // - Slice 사용 (서재 내 총 권수 필요없으므로 선택)
+    @GetMapping
     public ResponseEntity<ApiResponse<Slice<LibraryBookResponse>>> getMyLibrary(
             @AuthenticationPrincipal AuthUser authUser,
             @PageableDefault(
@@ -41,7 +43,7 @@ public class LibraryController {
 
     // 내 서재에 책 등록 //
     // 등록 시 해당 책 정보만 반환
-    @PostMapping("/v1/libraries")
+    @PostMapping
     public ResponseEntity<ApiResponse<LibraryBookSimpleResponse>> addBookLibrary(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody AddBookRequest addBookRequest
@@ -53,7 +55,7 @@ public class LibraryController {
     }
 
     // 내 서재에서 책 삭제 //
-    @DeleteMapping("/v1/libraries/books/{bookId}")
+    @DeleteMapping("/books/{bookId}")
     public ResponseEntity<ApiResponse<Void>> deleteBookMyLibrary(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long bookId
