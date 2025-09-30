@@ -1,6 +1,7 @@
 package org.example.bookstoreapp.domain.review.controller;
 
 import jakarta.validation.Valid;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
@@ -37,7 +38,9 @@ public class ReviewController {
     @GetMapping("/reviews")
     public ResponseEntity<ApiResponse<Slice<ReviewResponse>>> getReviews(
             @AuthenticationPrincipal AuthUser authUser,
-            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+//            @RequestParam(required = false) Long lastReviewId,
+//            @RequestParam(defaultValue = "10") int size
+            @PageableDefault Pageable pageable
     ) {
         Slice<ReviewResponse> reviews = reviewService.getReviews(authUser, pageable);
         return ResponseEntity.ok(ApiResponse.success("리뷰 조회 완료", reviews));

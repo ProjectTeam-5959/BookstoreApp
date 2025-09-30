@@ -56,16 +56,13 @@ public class ReviewService {
         return ReviewResponse.from(savedReview);
     }
 
-    // 로그인 유저를 기준으로 리뷰 전체 조회 - 현재 offset 기반의 페이지네이션 적용 추후 Cursor 기반의 페이지네이션 적용 고려!
-    /**
-     * Todo : 책이 삭제되었거나 삭제된 유저라면 softDelete - true로 변환되고 출력 X
-     */
+    // 리뷰 조회
     @Transactional(readOnly = true)
     public Slice<ReviewResponse> getReviews(
             AuthUser authUser,
             Pageable pageable
     ) {
-        Slice<Review> reviews = reviewRepository.findByUserId(authUser.getId(), pageable);
+        Slice<Review> reviews = reviewRepository.findByUserId(authUser.getId(),pageable);
         return reviews.map(ReviewResponse::from);
     }
 
