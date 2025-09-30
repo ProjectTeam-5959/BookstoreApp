@@ -6,6 +6,7 @@ import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
+import org.example.bookstoreapp.domain.library.dto.response.LibraryBookResponse;
 import org.example.bookstoreapp.domain.library.dto.response.LibraryResponse;
 import org.example.bookstoreapp.domain.library.entity.Library;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
@@ -14,6 +15,8 @@ import org.example.bookstoreapp.domain.library.repository.LibraryBookRepository;
 import org.example.bookstoreapp.domain.library.repository.LibraryRepository;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,15 +44,17 @@ public class LibraryService {
         );
     }
 
-    // 내 서재 조회 //
+    // 내 서재 조회 (무한 스크롤 적용) //
     // 1회 서재 생성 로직 포함되므로 readOnly = true 불가
-    public LibraryResponse getMyLibrary(AuthUser authUser) {
+    public Slice<LibraryBookResponse> getMyLibrary(AuthUser authUser, Pageable pageable) {
 
-        // 내 서재 가져오기(+ 최초 1회만 내 서재 생성)
         Library library = getLibraryOrCreate(authUser);
 
-        // 정적 팩토리 메서드(from) 호출/반환
-        return LibraryResponse.from(library);
+        Slice<LibraryBook> libraryBookSlice = libraryBookRepository.findByLibraryId(library.getId(), pageable);
+
+        return libraryBookSlice.map(
+                LibraryBookResponse::from
+        );
     }
 
     // 내 서재에 책 추가 //

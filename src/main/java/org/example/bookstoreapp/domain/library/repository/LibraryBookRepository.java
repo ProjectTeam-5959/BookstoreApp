@@ -1,6 +1,8 @@
 package org.example.bookstoreapp.domain.library.repository;
 
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +18,7 @@ public interface LibraryBookRepository extends JpaRepository<LibraryBook, Long> 
             nativeQuery = true
     )
     LibraryBook findEvenDeleted(Long libraryId, Long bookId);
+
+    // 무한스크롤 적용 (서재 조회)
+    Slice<LibraryBook> findByLibraryId(Long libraryId, Pageable pageable);
 }
