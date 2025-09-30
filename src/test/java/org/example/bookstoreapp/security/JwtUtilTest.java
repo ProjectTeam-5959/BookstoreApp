@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.ReflectionUtils;
 
+import javax.crypto.SecretKey;
 import java.lang.reflect.Field;
 import java.security.Key;
 import java.util.Objects;
@@ -64,11 +65,11 @@ public class JwtUtilTest {
 
         //Bearer 제거 후 Claims 추출
         String jwt =token.replace("Bearer ","");
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey((Key) ReflectionTestUtils.getField(jwtUtil,"key"))
+        Claims claims = Jwts.parser()
+                .verifyWith((SecretKey) ReflectionTestUtils.getField(jwtUtil,"key"))
                 .build()
-                .parseClaimsJws(jwt)
-                .getBody();
+                .parseSignedClaims(jwt)
+                .getPayload();
 
         Assertions.assertEquals(String.valueOf(userId), claims.getSubject());
         Assertions.assertEquals(email, claims.get("email"));
