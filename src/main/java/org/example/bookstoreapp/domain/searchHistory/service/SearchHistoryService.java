@@ -15,6 +15,7 @@ import org.example.bookstoreapp.domain.searchHistory.exception.enums.SearchError
 import org.example.bookstoreapp.domain.searchHistory.repository.SearchHistoryRepository;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -123,7 +124,33 @@ public class SearchHistoryService {
 
     // 나의 검색어 기반 도서 Top10
     @Transactional(readOnly = true)
-    public List<SearchResponse> searchTop10BooksByMySearchHistory(AuthUser authUser) {
+    public List<SearchResponse> searchTop10BooksByMySearchHistoryV1(AuthUser authUser) {
+
+        List<SearchHistory> histories = searchHistoryRepository.findAllByUserId(authUser.getId());
+
+        if (histories.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Book> books = bookQueryRepository.findTop10BySearchHistories(histories);
+
+        if (books.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<SearchResponse> dtos = new ArrayList<>();
+        for (Book book : books) {
+            dtos.add(SearchResponse.from(book));
+        }
+
+        return dtos;
+    }
+
+    // 나의 검색어 기반 도서 Top10
+    // 캐싱 적용
+    @Transactional(readOnly = true)
+    @Cacheable(value = "top10BooksByHistory", key = "#authUser.id")
+    public List<SearchResponse> searchTop10BooksByMySearchHistoryV2(AuthUser authUser) {
 
         List<SearchHistory> histories = searchHistoryRepository.findAllByUserId(authUser.getId());
 

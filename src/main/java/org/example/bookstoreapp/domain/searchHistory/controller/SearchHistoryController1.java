@@ -25,13 +25,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/search")
-public class SearchHistoryController {
+public class SearchHistoryController1 {
 
     private final SearchHistoryService searchHistoryService;
 
     // 키워드 검색
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<SearchResponse>>> searchKeyword(
+    public ResponseEntity<ApiResponse<Page<SearchResponse>>> searchKeywordV2(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
@@ -53,16 +53,16 @@ public class SearchHistoryController {
     }
 
     // 나의 검색어 기록 조회
-     @GetMapping("/histories")
-     public ResponseEntity<ApiResponse<Page<MySearchHistoryResponse>>> mySearchHistory(
-             @AuthenticationPrincipal AuthUser authUser,
-             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-     ) {
+    @GetMapping("/histories")
+    public ResponseEntity<ApiResponse<Page<MySearchHistoryResponse>>> mySearchHistory(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
         Page<MySearchHistoryResponse> histories = searchHistoryService.mySearchHistory(authUser.getId(), pageable);
         return ResponseEntity.ok(
                 ApiResponse.success("조회가 완료되었습니다.", histories)
         );
-     }
+    }
 
     // 인기 키워드 조회
     // 인기 키워드 title별 조회
@@ -97,10 +97,10 @@ public class SearchHistoryController {
 
     // 나의 검색어 기반 도서 Top10
     @GetMapping("/histories/popular/top10")
-    public ResponseEntity<ApiResponse<List<SearchResponse>>> searchTop10BooksByMySearchHistory(
+    public ResponseEntity<ApiResponse<List<SearchResponse>>> searchTop10BooksByMySearchHistoryV1(
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        List<SearchResponse> dtos = searchHistoryService.searchTop10BooksByMySearchHistory(authUser);
+        List<SearchResponse> dtos = searchHistoryService.searchTop10BooksByMySearchHistoryV1(authUser);
         return ResponseEntity.ok(
                 ApiResponse.success("검색어 기반 추천 도서 Top 10 조회입니다.", dtos)
         );
