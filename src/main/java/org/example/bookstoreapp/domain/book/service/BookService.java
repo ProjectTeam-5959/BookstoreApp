@@ -92,7 +92,7 @@ public class BookService {
     }
 
     public BookResponse update(Long bookId, BookUpdateRequest req) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() ->
+        Book book = bookRepository.findByIdAndDeletedFalse(bookId).orElseThrow(() ->
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
 
@@ -128,14 +128,9 @@ public class BookService {
     }
 
     public void delete(AuthUser authUser, Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(
+        Book book = bookRepository.findByIdAndDeletedFalse(id).orElseThrow(
                 () -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
-
-        /** 이미 삭제된 데이터라면? 예외처리 */
-        if (book.isDeleted()) {
-            throw new BusinessException(BookErrorCode.BOOK_NOT_FOUND);
-        }
 
         // 만약 책을 등록한 관리자의 아이디와 책을 등록한 관리자가 다르다면 예외처리 -> 일단 관리자끼리도 구분할 필요가 있을 지는 고민해보자!
         if (!Objects.equals(book.getCreatedBy(), authUser.getId())) {
@@ -165,7 +160,7 @@ public class BookService {
             Long contributorId,
             BookContributorRequest request
     ) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() ->
+        Book book = bookRepository.findByIdAndDeletedFalse(bookId).orElseThrow(() ->
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
 
         Contributor contributor = contributorRepository.findById(contributorId).orElseThrow(

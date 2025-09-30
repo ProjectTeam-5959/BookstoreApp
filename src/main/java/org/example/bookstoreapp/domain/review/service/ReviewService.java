@@ -37,13 +37,9 @@ public class ReviewService {
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_USER)
         );
 
-        Book book = bookRepository.findById(bookId).orElseThrow(
+        Book book = bookRepository.findByIdAndDeletedFalse(bookId).orElseThrow(
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_BOOK)
         );
-
-        if (book.isDeleted()) {
-            throw new BusinessException(ReviewErrorCode.NOT_FOUND_BOOK);
-        }
 
         Review review = Review.builder()
                 .content(reviewRequest.getContent())
