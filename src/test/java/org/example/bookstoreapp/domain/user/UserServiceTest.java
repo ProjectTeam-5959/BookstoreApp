@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.print.attribute.standard.MediaSize;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;

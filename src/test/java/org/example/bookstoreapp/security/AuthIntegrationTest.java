@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.example.bookstoreapp.BookstoreAppApplication;
 import org.example.bookstoreapp.config.TestSecurityConfig;
-import org.example.bookstoreapp.domain.auth.controller.AuthController;
 import org.example.bookstoreapp.domain.auth.dto.request.SigninRequest;
 import org.example.bookstoreapp.domain.auth.dto.request.SignupRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(
         classes = {
                 BookstoreAppApplication.class,
-                TestSecurityConfig.class  // ✅ 운영 SecurityConfig 대신 이걸 강제로 사용
+                TestSecurityConfig.class  // 운영 SecurityConfig 대신 이걸 강제로 사용
         }
 )
 @AutoConfigureMockMvc
@@ -42,11 +40,6 @@ public class AuthIntegrationTest {
     private ObjectMapper objectMapper;
     @Autowired
     private ApplicationContext context;
-
-    @Test
-    void contextLoads() {
-        assertNotNull(context.getBean(AuthController.class), "AuthController가 등록되어야 합니다");
-    }
 
     private final String adminEmail = "admin@example.com";
     private final String adminRawPassword = "Admin1234!!";
