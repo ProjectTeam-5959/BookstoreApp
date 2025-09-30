@@ -38,8 +38,6 @@ public class AuthIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private ApplicationContext context;
 
     private final String adminEmail = "admin@example.com";
     private final String adminRawPassword = "Admin1234!!";
@@ -102,7 +100,6 @@ public class AuthIntegrationTest {
                 .andDo(result -> {
                     String responseBody = result.getResponse().getContentAsString();
                     JsonNode jsonNode = objectMapper.readTree(responseBody);
-                    String bearerToken = jsonNode.get("data").asText();
                 })
                 .andReturn();
 
