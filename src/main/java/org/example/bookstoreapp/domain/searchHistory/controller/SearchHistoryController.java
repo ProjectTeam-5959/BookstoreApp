@@ -53,7 +53,7 @@ public class SearchHistoryController {
     }
 
     // 나의 검색어 기록 조회
-     @GetMapping("/history")
+     @GetMapping("/histories")
      public ResponseEntity<ApiResponse<Page<MySearchHistoryResponse>>> mySearchHistory(
              @AuthenticationPrincipal AuthUser authUser,
              @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
@@ -96,7 +96,7 @@ public class SearchHistoryController {
     }
 
     // 나의 검색어 기반 도서 Top10
-    @GetMapping("/history/popular/top10")
+    @GetMapping("/histories/popular/top10")
     public ResponseEntity<ApiResponse<List<SearchResponse>>> searchTop10BooksByMySearchHistory(
             @AuthenticationPrincipal AuthUser authUser
     ) {
