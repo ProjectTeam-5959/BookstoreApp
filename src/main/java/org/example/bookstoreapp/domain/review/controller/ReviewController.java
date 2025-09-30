@@ -1,21 +1,19 @@
 package org.example.bookstoreapp.domain.review.controller;
 
 import jakarta.validation.Valid;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.review.dto.request.ReviewRequest;
 import org.example.bookstoreapp.domain.review.dto.response.ReviewResponse;
 import org.example.bookstoreapp.domain.review.service.ReviewService;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,11 +36,11 @@ public class ReviewController {
     @GetMapping("/reviews")
     public ResponseEntity<ApiResponse<Slice<ReviewResponse>>> getReviews(
             @AuthenticationPrincipal AuthUser authUser,
-//            @RequestParam(required = false) Long lastReviewId,
-//            @RequestParam(defaultValue = "10") int size
-            @PageableDefault Pageable pageable
+            @RequestParam(required = false) Long lastReviewId,
+            @RequestParam(required = false) LocalDateTime lastModifiedAt,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        Slice<ReviewResponse> reviews = reviewService.getReviews(authUser, pageable);
+        Slice<ReviewResponse> reviews = reviewService.getReviews(authUser, lastReviewId, lastModifiedAt, size);
         return ResponseEntity.ok(ApiResponse.success("리뷰 조회 완료", reviews));
     }
 

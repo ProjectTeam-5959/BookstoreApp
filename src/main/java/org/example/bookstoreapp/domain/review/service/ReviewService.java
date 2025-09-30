@@ -12,11 +12,11 @@ import org.example.bookstoreapp.domain.review.exception.ReviewErrorCode;
 import org.example.bookstoreapp.domain.review.repository.ReviewRepository;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
@@ -60,9 +60,11 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public Slice<ReviewResponse> getReviews(
             AuthUser authUser,
-            Pageable pageable
+            Long lastReviewId,
+            LocalDateTime lastModifiedAt,
+            int size
     ) {
-        Slice<Review> reviews = reviewRepository.findByUserId(authUser.getId(),pageable);
+        Slice<Review> reviews = reviewRepository.findByUserId(authUser.getId(), lastReviewId, lastModifiedAt, size);
         return reviews.map(ReviewResponse::from);
     }
 
@@ -72,7 +74,7 @@ public class ReviewService {
             Long reviewId,
             ReviewRequest reviewRequest
     ) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(
+        Review review = reviewRepository.findByIdAndDeletedFalse(reviewId).orElseThrow(
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW)
         );
 
@@ -89,7 +91,7 @@ public class ReviewService {
             AuthUser authUser,
             Long reviewId
     ) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(
+        Review review = reviewRepository.findByIdAndDeletedFalse(reviewId).orElseThrow(
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW)
         );
 
