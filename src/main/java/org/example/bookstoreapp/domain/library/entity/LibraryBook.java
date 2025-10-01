@@ -57,4 +57,11 @@ public class LibraryBook extends SoftDelete {
     public static LibraryBook of(Library library, Book book) {
         return new LibraryBook(library, book);
     }
+
+    // restore 시점에 addedAt 갱신
+    @Override
+    public void restore() {
+        super.restore();
+        this.addedAt = LocalDateTime.now();
+    }
 }
