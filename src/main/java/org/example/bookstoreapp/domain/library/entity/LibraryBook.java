@@ -13,11 +13,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-// 컬럼자체에 unique = true  할 경우, 한 서재에는 책이 단 1권 밖에 못들어감
-// 그러므로 FK 컬럼 단위로 unique 걸 수 없다.
-// 복합 유니크 키 사용!
-// 한 서재에 같은 책이 중복 되지 않도록 막음
-// (library_id, book_id) 쌍이 유일해야 함 -> 테이블 레벨에서 설정
 @Table(
         name = "librarybooks",
         uniqueConstraints = {
