@@ -1,11 +1,7 @@
 package org.example.bookstoreapp.domain.book.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
 
 import java.time.LocalDate;

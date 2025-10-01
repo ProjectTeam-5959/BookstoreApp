@@ -13,12 +13,13 @@ import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorReques
 import org.example.bookstoreapp.domain.bookcontributor.dto.BookContributorResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,9 +58,11 @@ public class BookController {
     @GetMapping("/books/{bookId}")
     public ResponseEntity<ApiResponse<BookSingleResponse>> get(
             @PathVariable Long bookId,
-            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable // 한 페이지에 10개씩 출력
+            @RequestParam(required = false) Long lastReviewId,
+            @RequestParam(required = false) LocalDateTime lastModifiedAt,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(ApiResponse.success("해당 도서를 조회했습니다.", service.get(bookId, pageable)));
+        return ResponseEntity.ok(ApiResponse.success("해당 도서를 조회했습니다.", service.get(bookId, lastReviewId, lastModifiedAt, size)));
     }
 
     // 도서 검색

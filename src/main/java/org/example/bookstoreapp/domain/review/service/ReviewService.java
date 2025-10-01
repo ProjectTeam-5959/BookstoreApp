@@ -12,11 +12,11 @@ import org.example.bookstoreapp.domain.review.exception.ReviewErrorCode;
 import org.example.bookstoreapp.domain.review.repository.ReviewRepository;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
@@ -37,7 +37,7 @@ public class ReviewService {
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_USER)
         );
 
-        Book book = bookRepository.findById(bookId).orElseThrow(
+        Book book = bookRepository.findByIdAndDeletedFalse(bookId).orElseThrow(
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_BOOK)
         );
 
@@ -52,13 +52,15 @@ public class ReviewService {
         return ReviewResponse.from(savedReview);
     }
 
-    // 로그인 유저를 기준으로 리뷰 전체 조회 - 현재 offset 기반의 페이지네이션 적용 추후 Cursor 기반의 페이지네이션 적용 고려!
+    // 리뷰 조회
     @Transactional(readOnly = true)
     public Slice<ReviewResponse> getReviews(
             AuthUser authUser,
-            Pageable pageable
+            Long lastReviewId,
+            LocalDateTime lastModifiedAt,
+            int size
     ) {
-        Slice<Review> reviews = reviewRepository.findByUserId(authUser.getId(), pageable);
+        Slice<Review> reviews = reviewRepository.findByUserId(authUser.getId(), lastReviewId, lastModifiedAt, size);
         return reviews.map(ReviewResponse::from);
     }
 
@@ -68,7 +70,7 @@ public class ReviewService {
             Long reviewId,
             ReviewRequest reviewRequest
     ) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(
+        Review review = reviewRepository.findByIdAndDeletedFalse(reviewId).orElseThrow(
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW)
         );
 
@@ -85,7 +87,7 @@ public class ReviewService {
             AuthUser authUser,
             Long reviewId
     ) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(
+        Review review = reviewRepository.findByIdAndDeletedFalse(reviewId).orElseThrow(
                 () -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW)
         );
 
