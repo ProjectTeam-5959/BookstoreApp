@@ -12,7 +12,7 @@ import org.example.bookstoreapp.domain.contributor.entity.QContributor;
 import org.example.bookstoreapp.domain.searchHistory.entity.SearchHistory;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -68,7 +68,7 @@ public class BookRepositoryImpl implements CustomBookRepository {
                 .fetch();
 
         if (top10BookIds.isEmpty()) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         // fetch join으로 연관 엔티티 포함하여 최종 조회
