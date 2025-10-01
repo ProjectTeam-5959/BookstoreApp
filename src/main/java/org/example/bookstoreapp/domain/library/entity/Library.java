@@ -20,14 +20,13 @@ public class Library {
     private Long id;
 
     // 유저 1명당 서재 1개
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     // 서재에 담긴 책들 (중간 테이블)
-    @OneToMany(mappedBy = "library")
-    // mappedBy = "library" : 양방향 매핑에서 외래키(FK) 관리하는 주인이 누구인지 지정
-    // cascade = CascadeType.ALL : 라이브러리 저장/삭제 시, 그 안에 속한 LibraryBook도 같이 저장/삭제됨
+    // cascade = CascadeType.ALL 삭제 시 중간 테이블에 저장/삭제 반영 안됨
+    @OneToMany(mappedBy = "library", cascade = CascadeType.ALL)
     private List<LibraryBook> libraryBooks = new ArrayList<>();
 
     public Library(User user) {

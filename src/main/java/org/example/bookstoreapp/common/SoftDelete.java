@@ -16,4 +16,14 @@ public class SoftDelete {
     public void softDelete() {
         this.deleted = true;
     }
+
+    // 복구 메서드
+    public void restore() {
+        this.deleted = false;
+    }
+
+    // Deleted 상태 확인 메서드
+    public boolean isDeleted() {
+        return this.deleted;
+    }
 }

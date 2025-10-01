@@ -5,16 +5,26 @@ import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
+import org.example.bookstoreapp.domain.bookcontributor.BookContributorRepository;
+import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
 import org.example.bookstoreapp.domain.library.dto.request.AddBookRequest;
-import org.example.bookstoreapp.domain.library.dto.response.LibraryResponse;
+import org.example.bookstoreapp.domain.library.dto.response.LibraryBookResponse;
+import org.example.bookstoreapp.domain.library.dto.response.LibraryBookSimpleResponse;
 import org.example.bookstoreapp.domain.library.entity.Library;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
 import org.example.bookstoreapp.domain.library.exception.LibraryErrorCode;
+import org.example.bookstoreapp.domain.library.repository.LibraryBookRepository;
 import org.example.bookstoreapp.domain.library.repository.LibraryRepository;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,10 +34,11 @@ public class LibraryService {
     private final LibraryRepository libraryRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final LibraryBookRepository libraryBookRepository;
+    private final BookContributorRepository bookContributorRepository;
 
     // 중복 로직 메서드 - 내 서재 가져오기 + 서재 생성(최초 1회)
     // findByUserId -> Optional! => 있으면 Library 반환 / 없으면 orElseGet 구문 실행되어 서재 생성
-    // orElseGet : 값이 비어 있을 때만 실행되는 대체 로직
     private Library getLibraryOrCreate(AuthUser authUser) {
         return libraryRepository.findByUserId(authUser.getId()).orElseGet(
                 () -> {
@@ -39,54 +50,84 @@ public class LibraryService {
         );
     }
 
-    // 내 서재 조회 //
-    // 1회 서재 생성 로직 포함되므로 readOnly = true 불가
-    public LibraryResponse getMyLibrary(AuthUser authUser) {
+    // 책 ID 리스트로 저자 맵 만들기 (분리)
+    private Map<Long, List<String>> getBookAuthorsMap(List<Long> bookIds) {
+        // Repository 에서 JPQL 쿼리를 통해 'AUTHOR' 작가만 거름
+        List<BookContributor> authors = bookContributorRepository.findAllByBookIds(bookIds);
 
-        // 내 서재 가져오기(+ 최초 1회만 내 서재 생성)
+        return authors.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                bookContributor -> bookContributor.getBook().getId(),
+                                Collectors.mapping(
+                                        bookContributor -> bookContributor.getContributor().getName(),
+                                        Collectors.toList()
+                                )
+                        )
+                );
+    }
+
+    // 내 서재 조회 (무한 스크롤 적용) //
+    // 1회 서재 생성 로직 포함되므로 readOnly = true 불가
+    public Slice<LibraryBookResponse> getMyLibrary(AuthUser authUser, Pageable pageable) {
+
         Library library = getLibraryOrCreate(authUser);
 
-        // 정적 팩토리 메서드(from) 호출/반환
-        return LibraryResponse.from(library);
+        Slice<LibraryBook> libraryBookSlice =
+                libraryBookRepository.findByLibraryId(library.getId(), pageable);
+
+        List<Long> bookIds = libraryBookSlice
+                .stream()
+                .map(libraryBook -> libraryBook.getBook().getId())
+                .toList();
+
+        Map<Long, List<String>> bookAuthorsMap = getBookAuthorsMap(bookIds);
+
+        return libraryBookSlice.map(
+                libraryBook -> LibraryBookResponse.of(
+                        libraryBook,
+                        bookAuthorsMap.getOrDefault(
+                                libraryBook.getBook().getId(),
+                                List.of())
+                        )
+        );
     }
 
     // 내 서재에 책 추가 //
-    public LibraryResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
+    public LibraryBookSimpleResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
 
-        // 내 서재 가져오기(+ 최초 1회만 내 서재 생성)
         Library library = getLibraryOrCreate(authUser);
 
-        // 추가 할 책 가져오기
         Book book = bookRepository.findById(addBookRequest.bookId()).orElseThrow(
                 () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK)
         );
 
-        // LibraryBook 생성해서 책 등록
-        LibraryBook libraryBook = LibraryBook.of(library, book);
+        LibraryBook libraryBook = libraryBookRepository.findEvenDeleted(library.getId(), book.getId());
+
+        if (libraryBook == null) {
+            libraryBook = LibraryBook.of(library, book);
+        } else if (libraryBook.isDeleted()) {
+            libraryBook.restore();
+        } else {
+            throw new BusinessException(LibraryErrorCode.ALREADY_EXIST_BOOK);
+        }
+
         library.addBook(libraryBook);
 
-        return LibraryResponse.from(library);
+        return  LibraryBookSimpleResponse.from(libraryBook);
     }
 
     // 내 서재에 책 삭제 //
     public void deleteBookLibrary(AuthUser authUser, Long bookId) {
 
-        // 서재 가져오기
         Library library = libraryRepository.findByUserId(authUser.getId()).orElseThrow(
                 () -> new BusinessException(LibraryErrorCode.NOT_FOUND_LIBRARY)
         );
 
-        // 해당 책 가져오기
-        LibraryBook libBook = library.getLibraryBooks().stream()
-                .filter(libraryBook -> libraryBook.getBook().getId().equals(bookId))
-                // 위 경우 타입 : Stream<LibraryBook>
-                // findFirst() 역할 : 첫 번째 요소 꺼내 Optional<LibraryBook> 로 반환
-                // orElseThrow 가능해짐! (없으면 타입 불일치로 불가능!)
-                .findFirst()
-                .orElseThrow(
-                        () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK_IN_LIBRARY)
-                );
+        LibraryBook libraryBook = libraryBookRepository.findByLibraryIdAndBookId(library.getId(), bookId).orElseThrow(
+                () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK_IN_LIBRARY)
+        );
 
-        libBook.softDelete();
+        libraryBook.softDelete();
     }
 }
