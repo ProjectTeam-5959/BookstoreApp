@@ -12,13 +12,17 @@ import org.example.bookstoreapp.domain.contributor.entity.QContributor;
 import org.example.bookstoreapp.domain.searchHistory.entity.SearchHistory;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class BookRepositoryImpl implements CustomBookRepository {
 
+    private static final long MATCH_SCORE = 1L;
+    private static final long NO_SCORE = 0L;
+    private static final int TOP_N = 10;
+    
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -35,24 +39,24 @@ public class BookRepositoryImpl implements CustomBookRepository {
                 score = score.add(
                         new CaseBuilder()
                                 .when(book.title.lower().like("%" + history.getTitle().toLowerCase() + "%"))
-                                .then(1L)
-                                .otherwise(0L)
+                                .then(MATCH_SCORE)
+                                .otherwise(NO_SCORE)
                 );
             }
             if (history.getName() != null && !history.getName().isEmpty()) {
                 score = score.add(
                         new CaseBuilder()
                                 .when(c.name.lower().like("%" + history.getName().toLowerCase() + "%"))
-                                .then(1L)
-                                .otherwise(0L)
+                                .then(MATCH_SCORE)
+                                .otherwise(NO_SCORE)
                 );
             }
             if (history.getCategory() != null) {
                 score = score.add(
                         new CaseBuilder()
                                 .when(book.category.eq(history.getCategory()))
-                                .then(1L)
-                                .otherwise(0L)
+                                .then(MATCH_SCORE)
+                                .otherwise(NO_SCORE)
                 );
             }
         }
@@ -64,11 +68,11 @@ public class BookRepositoryImpl implements CustomBookRepository {
                 .join(book.bookContributors, bc)
                 .join(bc.contributor, c)
                 .orderBy(score.desc())
-                .limit(10)
+                .limit(TOP_N)
                 .fetch();
 
         if (top10BookIds.isEmpty()) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         // fetch join으로 연관 엔티티 포함하여 최종 조회

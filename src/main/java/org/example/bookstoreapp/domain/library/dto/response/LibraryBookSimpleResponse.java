@@ -6,25 +6,21 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstoreapp.domain.library.entity.LibraryBook;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class LibraryBookResponse {
+public class LibraryBookSimpleResponse {
 
     private final Long bookId;
     private final String title;
-    private final List<String> authors;
     private final LocalDateTime addedAt;
 
-    // 정적 팩토리 메서드
-    // LibraryBook + 저자 리스트 → LibraryBookResponse 로 변환
-    public static LibraryBookResponse of(LibraryBook libraryBook, List<String> authors) {
+    // 정적 팩토리 메서드 -> 등록 응답용 (저자 제외)
+    public static LibraryBookSimpleResponse from(LibraryBook libraryBook) {
 
-        return new LibraryBookResponse(
+        return new LibraryBookSimpleResponse(
                 libraryBook.getBook().getId(),
                 libraryBook.getBook().getTitle(),
-                authors,
                 libraryBook.getAddedAt()
         );
     }
