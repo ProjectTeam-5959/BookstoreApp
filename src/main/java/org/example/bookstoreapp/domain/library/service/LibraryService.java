@@ -39,7 +39,6 @@ public class LibraryService {
 
     // 중복 로직 메서드 - 내 서재 가져오기 + 서재 생성(최초 1회)
     // findByUserId -> Optional! => 있으면 Library 반환 / 없으면 orElseGet 구문 실행되어 서재 생성
-    // orElseGet : 값이 비어 있을 때만 실행되는 대체 로직
     private Library getLibraryOrCreate(AuthUser authUser) {
         return libraryRepository.findByUserId(authUser.getId()).orElseGet(
                 () -> {
@@ -56,17 +55,10 @@ public class LibraryService {
         // Repository 에서 JPQL 쿼리를 통해 'AUTHOR' 작가만 거름
         List<BookContributor> authors = bookContributorRepository.findAllByBookIds(bookIds);
 
-        // 조회된 작가 리스트를 stream 으로 변환
         return authors.stream()
-                // stream 결과 수집 -> groupingBy 사용하여 책 id 별로 그룹핑
                 .collect(
                         Collectors.groupingBy(
-                                // 그룹핑의 기준!
-                                // -> BookContributor 에서 연결된 책 id 꺼내 key(책 ID)로 사용
                                 bookContributor -> bookContributor.getBook().getId(),
-                                // 그룹핑된 값 가공
-                                // 각 BookContributor 에서 Contributor(작가)의 name 만 뽑아서 List 형태로 모음
-                                // => Map<Long, List<String>> 구조 완성
                                 Collectors.mapping(
                                         bookContributor -> bookContributor.getContributor().getName(),
                                         Collectors.toList()
@@ -79,30 +71,21 @@ public class LibraryService {
     // 1회 서재 생성 로직 포함되므로 readOnly = true 불가
     public Slice<LibraryBookResponse> getMyLibrary(AuthUser authUser, Pageable pageable) {
 
-        // 로그인 유저의 서재 가져오기 (없으면 생성 후 반환)
         Library library = getLibraryOrCreate(authUser);
 
-        // 페이징 적용된 Slice 형태로 조회 -> limit + offset 기반
         Slice<LibraryBook> libraryBookSlice =
                 libraryBookRepository.findByLibraryId(library.getId(), pageable);
 
-        // LibraryBook 객체들에서 Book의 ID만 추출하여 리스트 생성
         List<Long> bookIds = libraryBookSlice
                 .stream()
                 .map(libraryBook -> libraryBook.getBook().getId())
                 .toList();
 
-        // getBookAuthorsMap (저자 맵) 메서드 호출
         Map<Long, List<String>> bookAuthorsMap = getBookAuthorsMap(bookIds);
 
         return libraryBookSlice.map(
                 libraryBook -> LibraryBookResponse.of(
-                        // 기본 도서정보
                         libraryBook,
-                        // 현재 도서 id에 해당하는 저자 리스트 (없으면 빈 리스트)
-                        // V getOrDefault(Object key, V defaultValue)
-                        // - key : 찾고 싶은 키
-                        // - defaultValue : 키 없을 때 대체 반환값
                         bookAuthorsMap.getOrDefault(
                                 libraryBook.getBook().getId(),
                                 List.of())
@@ -137,12 +120,10 @@ public class LibraryService {
     // 내 서재에 책 삭제 //
     public void deleteBookLibrary(AuthUser authUser, Long bookId) {
 
-        // 서재 가져오기
         Library library = libraryRepository.findByUserId(authUser.getId()).orElseThrow(
                 () -> new BusinessException(LibraryErrorCode.NOT_FOUND_LIBRARY)
         );
 
-        // 특정 LibraryBook 바로 조회
         LibraryBook libraryBook = libraryBookRepository.findByLibraryIdAndBookId(library.getId(), bookId).orElseThrow(
                 () -> new BusinessException(LibraryErrorCode.NOT_FOUND_BOOK_IN_LIBRARY)
         );
