@@ -1,6 +1,7 @@
 package org.example.bookstoreapp.domain.book.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
@@ -33,6 +34,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -140,7 +142,7 @@ public class BookService {
         int deletedReviewCount = reviewRepository.softDeleteByBookId(id);
 
         // 잘 적용된 건지 확인하기 위해!
-        System.out.println("삭제된 리뷰의 개수: " + deletedReviewCount);
+        log.info("삭제된 리뷰의 개수: {}", deletedReviewCount);
 
         // softDelete 적용
         book.softDelete();
