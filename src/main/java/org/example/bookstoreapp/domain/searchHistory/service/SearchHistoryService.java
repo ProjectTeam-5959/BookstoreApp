@@ -6,7 +6,6 @@ import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
-import org.example.bookstoreapp.domain.bookcontributor.entity.BookContributor;
 import org.example.bookstoreapp.domain.contributor.dto.SearchContributorResponse;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.MySearchHistoryResponse;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.SearchResponse;
@@ -15,8 +14,8 @@ import org.example.bookstoreapp.domain.searchHistory.exception.enums.SearchError
 import org.example.bookstoreapp.domain.searchHistory.repository.SearchHistoryRepository;
 import org.example.bookstoreapp.domain.user.entity.User;
 import org.example.bookstoreapp.domain.user.repository.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +64,7 @@ public class SearchHistoryService {
 
         if (authUser != null) {
             user = userRepository.findById(authUser.getId()).orElseThrow(
-                    () -> new IllegalStateException("인증된 사용자를 찾을 수 없습니다."));
+                    () -> new BusinessException(SearchErrorCode.UNAUTHORIZED));
 
         } else {
             // 로그인 안 한 경우 -> 유저 없이 저장
@@ -97,9 +96,9 @@ public class SearchHistoryService {
 
     // 나의 검색어 기록 조회
     @Transactional(readOnly = true)
-    public Page<MySearchHistoryResponse> mySearchHistory(Long userId, Pageable pageable) {
-        return searchHistoryRepository.findByUserId(userId, pageable)
-                .map(MySearchHistoryResponse::from
+    public Page<MySearchHistoryResponse> mySearchHistory(AuthUser authUser, Pageable pageable) {
+        return searchHistoryRepository.findByUserId(authUser.getId(), pageable)
+                .map(searchHistory -> MySearchHistoryResponse.from(searchHistory)
                 );
     }
 
@@ -123,42 +122,51 @@ public class SearchHistoryService {
 
     // 나의 검색어 기반 도서 Top10
     @Transactional(readOnly = true)
-    public List<SearchResponse> searchTop10BooksByMySearchHistory(AuthUser authUser) {
+    public List<SearchResponse> searchTop10BooksByMySearchHistoryV1(AuthUser authUser) {
+
         List<SearchHistory> histories = searchHistoryRepository.findAllByUserId(authUser.getId());
+
+        if (histories.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Book> books = bookRepository.findTop10BySearchHistories(histories);
+
+        if (books.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         List<SearchResponse> dtos = new ArrayList<>();
-
-        for (SearchHistory searchHistory : histories) {
-            String title = searchHistory.getTitle();
-            String name = searchHistory.getName();
-            BookCategory category = searchHistory.getCategory();
-
-            List<Book> books = bookRepository.findTop10BooksByMySearchHistory(
-                    title,
-                    name,
-                    category,
-                    PageRequest.of(0, 10)
-            );    // Top10 고정
-
-            for (Book book : books) {
-                List<SearchContributorResponse> searchContributors = new ArrayList<>();
-                for (BookContributor bookContributor : book.getBookContributors()) {
-                    searchContributors.add(SearchContributorResponse.from(bookContributor.getContributor(), bookContributor.getRole()));
-                }
-
-                dtos.add(new SearchResponse(
-                        book.getId(),
-                        book.getTitle(),
-                        searchContributors,
-                        book.getCategory(),
-                        book.getCreatedAt()
-                ));
-            }
+        for (Book book : books) {
+            dtos.add(SearchResponse.from(book));
         }
 
         return dtos;
-
     }
 
-    // 인기 검색어 기반 도서 Top10
-//    @Transactional(readOnly = true)
+    // 나의 검색어 기반 도서 Top10
+    // 캐싱 적용
+    @Transactional(readOnly = true)
+    @Cacheable(value = "top10BooksByHistory", key = "#authUser.id")
+    public List<SearchResponse> searchTop10BooksByMySearchHistoryV2(AuthUser authUser) {
+
+        List<SearchHistory> histories = searchHistoryRepository.findAllByUserId(authUser.getId());
+
+        if (histories.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Book> books = bookRepository.findTop10BySearchHistories(histories);
+
+        if (books.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<SearchResponse> dtos = new ArrayList<>();
+        for (Book book : books) {
+            dtos.add(SearchResponse.from(book));
+        }
+
+        return dtos;
+    }
 }
