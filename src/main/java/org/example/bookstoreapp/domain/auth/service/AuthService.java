@@ -29,7 +29,11 @@ public class AuthService {
         if (userRepository.existsByNickname(request.getNickname())) {
             throw new BusinessException(AuthErrorCode.DUPLICATE_NICKNAME);
         }
-        User newUser = User.of(request.getNickname(), request.getEmail(), UserRole.ROLE_USER, request.getName(), passwordEncoder.encode(request.getPassword()));
+        User newUser = User.of(request.getNickname(),
+                request.getEmail(),
+                UserRole.ROLE_USER,
+                request.getName(),
+                passwordEncoder.encode(request.getPassword()));
         User savedUser = userRepository.save(newUser);
 
         return jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole());

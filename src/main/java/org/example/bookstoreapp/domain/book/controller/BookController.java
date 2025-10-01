@@ -55,7 +55,7 @@ public class BookController {
      */
 
     // 도서 단건 조회
-    @GetMapping("/books/{bookId}")
+    @GetMapping("/admin/books/{bookId}")
     public ResponseEntity<ApiResponse<BookSingleResponse>> get(
             @PathVariable Long bookId,
             @RequestParam(required = false) Long lastReviewId,
@@ -66,7 +66,7 @@ public class BookController {
     }
 
     // 도서 검색
-    @GetMapping("/books")
+    @GetMapping("/admin/books")
     // 검색 조건: title, category, publisher, isbn
     // 페이징: page, size
     // 정렬: sort=createdAt,desc

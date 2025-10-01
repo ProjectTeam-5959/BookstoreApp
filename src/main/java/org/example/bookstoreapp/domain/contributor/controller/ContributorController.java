@@ -2,10 +2,12 @@ package org.example.bookstoreapp.domain.contributor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.contributor.dto.ContributorCreateRequest;
 import org.example.bookstoreapp.domain.contributor.dto.ContributorResponse;
 import org.example.bookstoreapp.domain.contributor.service.ContributorService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +23,7 @@ public class ContributorController {
     private final ContributorService service;
 
     @PostMapping("/admin/contributors")
-    public ResponseEntity<ContributorResponse> create(
+    public ResponseEntity<ApiResponse<ContributorResponse>> create(
             @AuthenticationPrincipal AuthUser authUser,
             @Valid @RequestBody ContributorCreateRequest req) {
 
@@ -29,11 +31,6 @@ public class ContributorController {
                 req,
                 authUser.getId()
         );
-
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/api/admin/contributors")
-                .buildAndExpand(created.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("기여자 생성되었습니다.",created));
     }
 }

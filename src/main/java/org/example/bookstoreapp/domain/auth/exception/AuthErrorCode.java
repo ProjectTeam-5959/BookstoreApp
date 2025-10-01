@@ -9,22 +9,17 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum AuthErrorCode implements ErrorCode {
 
-    NOT_FOUND_TOKEN(HttpStatus.UNAUTHORIZED,"인증토큰을 찾을 수 없습니다."),
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST,"유효하지 않은 토큰 형식입니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED,"토큰이 만료되었습니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT,  "이미 사용 중인 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT,  "이미 사용 중인 닉네임입니다."),
 
-    USER_NOT_FOUND_BY_EMAIL(HttpStatus.FORBIDDEN,  "존재하지 않는 유저 email입니다."),
-    USER_NOT_FOUND_BY_ID(HttpStatus.FORBIDDEN,  "존재하지 않는 유저 id입니다."),
+    USER_NOT_FOUND_BY_EMAIL(HttpStatus.NOT_FOUND,  "존재하지 않는 유저 email입니다."),
+    USER_NOT_FOUND_BY_ID(HttpStatus.NOT_FOUND,  "존재하지 않는 유저 id입니다."),
 
-    // 비밀번호 불일치 오류도 추가해 두면 좋습니다.
-    PASSWORD_MISMATCH(HttpStatus.FORBIDDEN  ,  "비밀번호가 일치하지 않습니다."),
     INVALID_USER_ROLE(HttpStatus.BAD_REQUEST,  "유효하지 않은 UserRole입니다."),
 
-    INVALID_NEW_PASSWORD(HttpStatus.CONFLICT,"새 비밀번호는 기존 비밀번호와 같을 수 없습니다."),
+    PASSWORD_MISMATCH(HttpStatus.UNAUTHORIZED ,  "비밀번호가 일치하지 않습니다."),
+    INVALID_NEW_PASSWORD(HttpStatus.BAD_REQUEST,"새 비밀번호는 기존 비밀번호와 같을 수 없습니다."),
     INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST,"비밀번호는 대소문자 불문 영문, 숫자, 특수문자를 모두 포함해야 하며, 8~30자여야 합니다."),
-    INVALID_EMAIL_FORMAT(HttpStatus.BAD_REQUEST,"이메일 형식이 맞지 않습니다.")
     ;
 
     private final HttpStatus status;

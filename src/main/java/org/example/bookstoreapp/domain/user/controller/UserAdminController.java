@@ -24,15 +24,7 @@ public class UserAdminController {
     @PatchMapping("/admin/users/{userId}/userRole")
     public ResponseEntity<ApiResponse<UserResponse>> changeUserRole(@PathVariable long userId, @RequestBody UserRoleChangeRequest request) {
         return ResponseEntity.ok(
-                ApiResponse.success("권한을 변경했습니다.",userAdminService.changeUserRole(userId,request))
+                ApiResponse.success("권한을 변경했습니다.", userAdminService.changeUserRole(userId, request))
         );
-    }
-
-//Todo:위치 고려해보기.
-    @GetMapping("/admin/test")
-    public void test(@AuthenticationPrincipal AuthUser authUser) {
-        log.info("User ID: {}", authUser.getId());
-        log.info("Email: {}", authUser.getEmail());
-        log.info("Authorities: {}", authUser.getAuthorities());
     }
 }

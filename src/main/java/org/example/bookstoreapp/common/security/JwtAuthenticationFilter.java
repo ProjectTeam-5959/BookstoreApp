@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.bookstoreapp.common.response.ApiResponse;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.user.enums.UserRole;
 import org.springframework.http.HttpStatus;
@@ -87,10 +88,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json;charset=UTF-8");
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", status.name());
-        errorResponse.put("code", status.value());
-        errorResponse.put("message", message);
+
+        ApiResponse<Object> errorResponse = ApiResponse.error(message);
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

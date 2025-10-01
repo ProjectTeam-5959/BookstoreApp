@@ -53,18 +53,12 @@ public class AuthIntegrationTest {
                         .content(objectMapper.writeValueAsString(request))
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andDo(result -> {
-                    String responseBody = result.getResponse().getContentAsString();
-                    JsonNode jsonNode = objectMapper.readTree(responseBody);
-                    String bearerToken = jsonNode.get("data").asText();
-
-                    assertThat(bearerToken).isNotNull();
-                })
                 .andReturn();
-//Todo:위와 중복되는 코드 정리하기
+
         String responseBody = mvcResult.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         String bearerToken = jsonNode.get("data").asText();
+        assertThat(bearerToken).isNotNull();
 
         // 관리자 엔드포인트 호출
         mockMvc.perform(get("/admin/test")
@@ -97,12 +91,8 @@ public class AuthIntegrationTest {
                 .content(objectMapper.writeValueAsString(signinRequest))
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andDo(result -> {
-                    String responseBody = result.getResponse().getContentAsString();
-                    JsonNode jsonNode = objectMapper.readTree(responseBody);
-                })
                 .andReturn();
-//Todo:중복되는 코드 정리하기
+
         String responseBody = mvcResult.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         String bearerToken = jsonNode.get("data").asText();
