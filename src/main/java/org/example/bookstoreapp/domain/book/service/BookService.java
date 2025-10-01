@@ -1,6 +1,7 @@
 package org.example.bookstoreapp.domain.book.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.dto.BookCreateRequest;
@@ -27,11 +28,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -57,17 +60,13 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public BookSingleResponse get(Long id, Pageable pageable) {
-        Book book = bookRepository.findById(id).orElseThrow(() ->
+    public BookSingleResponse get(Long id, Long lastReviewId, LocalDateTime lastModifiedAt, int size) {
+        Book book = bookRepository.findByIdAndDeletedFalse(id).orElseThrow(() ->
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND)     // 예외 규칙: 없음 → 404 (기존 EntityNotFoundException → 500 방지)
         );
 
-        /** 이미 삭제된 데이터라면? 예외처리 */
-        if (book.isDeleted()) {
-            throw new BusinessException(BookErrorCode.BOOK_NOT_FOUND);
-        }
         // 도서에 달린 리뷰 조회
-        Slice<Review> reviews = reviewRepository.findByBookId(book.getId(), pageable);
+        Slice<Review> reviews = reviewRepository.findByBookId(book.getId(), lastReviewId, lastModifiedAt, size);
 
         return new BookSingleResponse(
                 book.getId(),
@@ -95,12 +94,12 @@ public class BookService {
     }
 
     public BookResponse update(Long bookId, BookUpdateRequest req) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() ->
+        Book book = bookRepository.findByIdAndDeletedFalse(bookId).orElseThrow(() ->
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
 
         if (req.getIsbn() != null) {
-            if(req.getIsbn().equals(book.getIsbn())){
+            if (req.getIsbn().equals(book.getIsbn())) {
                 throw new BusinessException(BookErrorCode.INVALID_ISBN);
             }
             if (bookRepository.existsByIsbn(req.getIsbn())) {
@@ -131,19 +130,19 @@ public class BookService {
     }
 
     public void delete(AuthUser authUser, Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(
+        Book book = bookRepository.findByIdAndDeletedFalse(id).orElseThrow(
                 () -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
-
-        /** 이미 삭제된 데이터라면? 예외처리 */
-        if (book.isDeleted()) {
-            throw new BusinessException(BookErrorCode.BOOK_NOT_FOUND);
-        }
 
         // 만약 책을 등록한 관리자의 아이디와 책을 등록한 관리자가 다르다면 예외처리 -> 일단 관리자끼리도 구분할 필요가 있을 지는 고민해보자!
         if (!Objects.equals(book.getCreatedBy(), authUser.getId())) {
             throw new BusinessException(BookErrorCode.FORBIDDEN_ACCESS_BOOK);
         }
+
+        int deletedReviewCount = reviewRepository.softDeleteByBookId(id);
+
+        // 잘 적용된 건지 확인하기 위해!
+        log.info("삭제된 리뷰의 개수: {}", deletedReviewCount);
 
         // softDelete 적용
         book.softDelete();
@@ -168,7 +167,7 @@ public class BookService {
             Long contributorId,
             BookContributorRequest request
     ) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() ->
+        Book book = bookRepository.findByIdAndDeletedFalse(bookId).orElseThrow(() ->
                 new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
 
         Contributor contributor = contributorRepository.findById(contributorId).orElseThrow(
