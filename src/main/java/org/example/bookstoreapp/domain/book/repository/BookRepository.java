@@ -9,9 +9,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificationExecutor<Book> {
+public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificationExecutor<Book>, CustomBookRepository {
     // ISBN으로 단일 도서 검색
     Optional<Book> findByIsbn(String isbn);
 
@@ -34,10 +35,13 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
             @Param("category") BookCategory category,
             Pageable pageable
     );
+
+    // 삭제되지 않은 도서 조회
+    Optional<Book> findByIdAndDeletedFalse(Long id);
 }
 
-    // 나의 검색어 기반 도서 Top10
-    /*@Query("""
+// 나의 검색어 기반 도서 Top10
+/*    @Query("""
             SELECT DISTINCT b
             FROM Book b
             JOIN FETCH b.bookContributors bc
@@ -51,11 +55,7 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
             @Param("name") String name,
             @Param("category") BookCategory category,
             Pageable pageable
-    );
-
-    // 삭제되지 않은 도서 조회
-    Optional<Book> findByIdAndDeletedFalse(Long id);
-}
+    );*/
 
 /**
  * 1. JpaSpecificationExecutor<Book> 추가

@@ -5,7 +5,6 @@ import org.example.bookstoreapp.common.exception.BusinessException;
 import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.book.entity.Book;
 import org.example.bookstoreapp.domain.book.entity.BookCategory;
-import org.example.bookstoreapp.domain.book.repository.BookQueryRepository;
 import org.example.bookstoreapp.domain.book.repository.BookRepository;
 import org.example.bookstoreapp.domain.contributor.dto.SearchContributorResponse;
 import org.example.bookstoreapp.domain.searchHistory.dto.response.MySearchHistoryResponse;
@@ -29,7 +28,6 @@ import java.util.List;
 public class SearchHistoryService {
 
     private final BookRepository bookRepository;
-    private final BookQueryRepository bookQueryRepository;
     private final SearchHistoryRepository searchHistoryRepository;
     private final UserRepository userRepository;
 
@@ -132,7 +130,7 @@ public class SearchHistoryService {
             return new ArrayList<>();
         }
 
-        List<Book> books = bookQueryRepository.findTop10BySearchHistories(histories);
+        List<Book> books = bookRepository.findTop10BySearchHistories(histories);
 
         if (books.isEmpty()) {
             return new ArrayList<>();
@@ -158,7 +156,7 @@ public class SearchHistoryService {
             return new ArrayList<>();
         }
 
-        List<Book> books = bookQueryRepository.findTop10BySearchHistories(histories);
+        List<Book> books = bookRepository.findTop10BySearchHistories(histories);
 
         if (books.isEmpty()) {
             return new ArrayList<>();

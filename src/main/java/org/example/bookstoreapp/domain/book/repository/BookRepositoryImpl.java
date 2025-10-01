@@ -17,10 +17,11 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class BookQueryRepository {
+public class BookRepositoryImpl implements CustomBookRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public List<Book> findTop10BySearchHistories(List<SearchHistory> histories) {
 
         QBook book = QBook.book;
@@ -56,7 +57,7 @@ public class BookQueryRepository {
             }
         }
 
-        // Top 10 Book ID 먼저 조회 (DB에서 limit 적용)
+        // Top 10 Book ID 먼저 조회
         List<Long> top10BookIds = queryFactory
                 .select(book.id)
                 .from(book)
@@ -70,7 +71,7 @@ public class BookQueryRepository {
             return new ArrayList<>();
         }
 
-        // fetch join으로 연관 엔티티 포함하여 최종 조회
+        // fetch join으로 연관 엔티티 포함
         return queryFactory
                 .selectFrom(book)
                 .distinct()
@@ -79,4 +80,5 @@ public class BookQueryRepository {
                 .where(book.id.in(top10BookIds))
                 .fetch();
     }
+
 }
