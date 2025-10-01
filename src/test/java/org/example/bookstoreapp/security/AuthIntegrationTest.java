@@ -61,7 +61,7 @@ public class AuthIntegrationTest {
                     assertThat(bearerToken).isNotNull();
                 })
                 .andReturn();
-
+//Todo:위와 중복되는 코드 정리하기
         String responseBody = mvcResult.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         String bearerToken = jsonNode.get("data").asText();
@@ -102,7 +102,7 @@ public class AuthIntegrationTest {
                     JsonNode jsonNode = objectMapper.readTree(responseBody);
                 })
                 .andReturn();
-
+//Todo:중복되는 코드 정리하기
         String responseBody = mvcResult.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         String bearerToken = jsonNode.get("data").asText();

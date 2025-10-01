@@ -1,6 +1,6 @@
 package org.example.bookstoreapp.config;
 
-import org.example.bookstoreapp.common.config.CustomAccessDeniedHandler;
+import org.example.bookstoreapp.common.security.CustomAccessDeniedHandler;
 import org.example.bookstoreapp.common.security.JwtAuthenticationFilter;
 import org.example.bookstoreapp.domain.user.enums.UserRole;
 import org.springframework.boot.test.context.TestConfiguration;

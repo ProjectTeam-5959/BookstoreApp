@@ -120,7 +120,7 @@ public class AuthServiceTest {
         //when then
         assertThrows(BusinessException.class,
                 () -> authService.login(request),
-                "nickname already exists."
+                "user not found by email."
         );
     }
 

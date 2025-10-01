@@ -12,7 +12,14 @@ import org.example.bookstoreapp.domain.user.enums.UserRole;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Table(
+        name = "users",
+        indexes = {
+                @Index(name = "idx_user_email", columnList = "email", unique = true),
+                @Index(name = "idx_user_nickname", columnList = "nickname", unique = true),
+                @Index(name = "idx_user_deleted", columnList = "deleted")
+        }
+)
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
