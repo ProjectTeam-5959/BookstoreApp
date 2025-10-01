@@ -83,12 +83,10 @@ public class SearchHistoryService {
                 book.getId(),
                 book.getTitle(),
                 book.getBookContributors().stream()
-                        .map(bookContributor -> SearchContributorResponse.builder()
-                                .id(bookContributor.getContributor().getId())
-                                .name(bookContributor.getContributor().getName())
-                                .role(bookContributor.getRole())
-                                .build()
-                        ).toList(),
+                        .map(bookContributor -> SearchContributorResponse.from(
+                                bookContributor.getContributor(),
+                                bookContributor.getRole()
+                        )).toList(),
                 book.getCategory(),
                 book.getCreatedAt()
         ));
