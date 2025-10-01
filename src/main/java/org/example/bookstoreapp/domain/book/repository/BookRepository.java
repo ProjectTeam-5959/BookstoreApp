@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificationExecutor<Book> {
+public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificationExecutor<Book>, CustomBookRepository {
     // ISBN으로 단일 도서 검색
     Optional<Book> findByIsbn(String isbn);
 
