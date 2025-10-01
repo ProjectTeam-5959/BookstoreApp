@@ -57,7 +57,7 @@ public class BookRepositoryImpl implements CustomBookRepository {
             }
         }
 
-        // Top 10 Book ID 먼저 조회
+        // Top 10 Book ID 먼저 조회 (DB에서 limit 적용)
         List<Long> top10BookIds = queryFactory
                 .select(book.id)
                 .from(book)
@@ -71,7 +71,7 @@ public class BookRepositoryImpl implements CustomBookRepository {
             return new ArrayList<>();
         }
 
-        // fetch join으로 연관 엔티티 포함
+        // fetch join으로 연관 엔티티 포함하여 최종 조회
         return queryFactory
                 .selectFrom(book)
                 .distinct()
@@ -80,5 +80,4 @@ public class BookRepositoryImpl implements CustomBookRepository {
                 .where(book.id.in(top10BookIds))
                 .fetch();
     }
-
 }
