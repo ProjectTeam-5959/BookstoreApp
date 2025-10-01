@@ -48,6 +48,13 @@ dependencies {
     annotationProcessor "io.github.openfeign.querydsl:querydsl-apt:7.0:jpa"
 
     testImplementation 'com.h2database:h2'
+
+    // QueryDSL JPA
+    implementation "io.github.openfeign.querydsl:querydsl-jpa:7.0"
+    annotationProcessor "io.github.openfeign.querydsl:querydsl-apt:7.0:jpa"
+
+    // 캐싱(스프링 부트 제공)
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 }
 
 tasks.named('test') {
