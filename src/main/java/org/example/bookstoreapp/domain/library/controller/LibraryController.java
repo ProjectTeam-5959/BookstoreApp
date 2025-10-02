@@ -50,7 +50,7 @@ public class LibraryController {
     ) {
         LibraryBookSimpleResponse response = libraryService.addBookLibrary(authUser, addBookRequest);
 
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("내 서재에 책을 추가했습니다.", response));
     }
 

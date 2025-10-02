@@ -2,9 +2,7 @@ package org.example.bookstoreapp.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
 
-@Getter
 @MappedSuperclass
 public class SoftDelete {
 
