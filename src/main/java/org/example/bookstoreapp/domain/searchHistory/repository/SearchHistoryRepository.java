@@ -19,7 +19,7 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
             WHERE sh.title IS NOT NULL
             GROUP BY sh.title
             ORDER BY COUNT(sh.title) DESC
-            """)    // 내림차순 정렬 고정
+            """)
     Page<PopularKeywordCount> findPopularTitles(Pageable pageable);
 
     // 인기 키워드 name별 조회
@@ -29,7 +29,7 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
             WHERE sh.name IS NOT NULL
             GROUP BY sh.name
             ORDER BY COUNT(sh.name) DESC
-            """)    // 내림차순 정렬 고정
+            """)
     Page<PopularKeywordCount> findPopularNames(Pageable pageable);
 
     // 인기 키워드 category별 조회
@@ -39,7 +39,7 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
         WHERE sh.category IS NOT NULL
         GROUP BY sh.category
         ORDER BY COUNT(sh.category) DESC
-        """)    // 내림차순 정렬 고정
+        """)
     Page<PopularKeywordCount> findPopularCategories(Pageable pageable);
 
     List<SearchHistory> findAllByUserId(Long userId);

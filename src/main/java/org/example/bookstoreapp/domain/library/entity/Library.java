@@ -25,7 +25,6 @@ public class Library {
     private User user;
 
     // 서재에 담긴 책들 (중간 테이블)
-    // cascade = CascadeType.ALL 삭제 시 중간 테이블에 저장/삭제 반영 안됨
     @OneToMany(mappedBy = "library", cascade = CascadeType.ALL)
     private List<LibraryBook> libraryBooks = new ArrayList<>();
 
@@ -40,7 +39,6 @@ public class Library {
 
     // 편의 메서드 : 내 서재에 책 추가
     public void addBook(LibraryBook libraryBook) {
-        // 부모(library) 컬렉션에 추가
         libraryBooks.add(libraryBook);
     }
 }

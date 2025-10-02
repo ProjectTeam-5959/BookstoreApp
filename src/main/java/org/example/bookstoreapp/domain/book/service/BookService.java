@@ -32,9 +32,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -62,10 +62,9 @@ public class BookService {
     @Transactional(readOnly = true)
     public BookSingleResponse get(Long id, Long lastReviewId, LocalDateTime lastModifiedAt, int size) {
         Book book = bookRepository.findByIdAndDeletedFalse(id).orElseThrow(() ->
-                new BusinessException(BookErrorCode.BOOK_NOT_FOUND)     // 예외 규칙: 없음 → 404 (기존 EntityNotFoundException → 500 방지)
+                new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
 
-        // 도서에 달린 리뷰 조회
         Slice<Review> reviews = reviewRepository.findByBookId(book.getId(), lastReviewId, lastModifiedAt, size);
 
         return new BookSingleResponse(
@@ -103,7 +102,7 @@ public class BookService {
                 throw new BusinessException(BookErrorCode.INVALID_ISBN);
             }
             if (bookRepository.existsByIsbn(req.getIsbn())) {
-                throw new BusinessException(BookErrorCode.DUPLICATE_ISBN); // 409 Conflict
+                throw new BusinessException(BookErrorCode.DUPLICATE_ISBN);
             }
             book.changeIsbn(req.getIsbn());
         }
@@ -120,12 +119,10 @@ public class BookService {
             try {
                 book.changeCategory(req.getCategory());
             } catch (IllegalArgumentException e) {
-                // 잘못된 카테고리 값 처리 (예: 예외 던지기 또는 무시)
-                throw new BusinessException(BookErrorCode.INVALID_CATEGORY); // 400 Bad Request
+                throw new BusinessException(BookErrorCode.INVALID_CATEGORY);
             }
         }
 
-        // JPA 더티 체킹.
         return toResponse(book);
     }
 
@@ -134,17 +131,14 @@ public class BookService {
                 () -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND)
         );
 
-        // 만약 책을 등록한 관리자의 아이디와 책을 등록한 관리자가 다르다면 예외처리 -> 일단 관리자끼리도 구분할 필요가 있을 지는 고민해보자!
         if (!Objects.equals(book.getCreatedBy(), authUser.getId())) {
             throw new BusinessException(BookErrorCode.FORBIDDEN_ACCESS_BOOK);
         }
 
         int deletedReviewCount = reviewRepository.softDeleteByBookId(id);
 
-        // 잘 적용된 건지 확인하기 위해!
         log.info("삭제된 리뷰의 개수: {}", deletedReviewCount);
 
-        // softDelete 적용
         book.softDelete();
     }
 
@@ -184,26 +178,4 @@ public class BookService {
                 bookContributor.getRole()
         );
     }
-
-    /**
-     * 도서 검색 서비스 메서드
-     * <p>
-     * - title, category, publisher 조건을 Specification 으로 동적 조합.
-     * - 입력값이 null 또는 빈 값이면 해당 조건은 무시됨.
-     * - 예: title + category만 검색 / category + publisher만 검색 가능.
-     */
-//    @Transactional(readOnly = true)
-//    public List<Book> searchBooks(String title, String category, String publisher) {
-//        // 기본 조건: titleContains
-//        Specification<Book> spec = BookSpecs.titleContains(title);
-//        // 'where(org.springframework.data.jpa.domain.Specification<T>)'은(는) 버전 3.5.0 이상에서 지원 중단되며 제거될 예정
-////        Specification<Book> spec = Specification.where(BookSpecs.titleContains(title));
-//
-//        // and 조건으로 category, publisher 추가
-//        spec = spec.and(BookSpecs.categoryEq(category))
-//                .and(BookSpecs.publisherEq(publisher));
-//
-//        // Repository를 통해 실행 → 조건에 맞는 도서 목록 반환
-//        return bookRepository.findAll(spec);
-//    }
 }

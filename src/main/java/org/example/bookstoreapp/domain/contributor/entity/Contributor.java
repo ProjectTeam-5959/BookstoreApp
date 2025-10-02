@@ -22,7 +22,6 @@ public class Contributor extends BaseEntity {
     private Long id;
 
     // 양방향 관계 설정
-    // OneToMany는 기본적으로 fetch = FetchType.LAZY
     @OneToMany(mappedBy = "contributor")
     private final List<BookContributor> bookContributors = new ArrayList<>();
 

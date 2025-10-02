@@ -75,14 +75,14 @@ public class ReviewService {
         );
 
         if (!Objects.equals(review.getUser().getId(), authUser.getId())) {
-            throw new BusinessException(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW); // 예시 에러 코드
+            throw new BusinessException(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW);
         }
 
         review.updateReview(reviewRequest);
         return ReviewResponse.from(review);
     }
 
-    // 리뷰 삭제 (soft delete 적용)
+    // 리뷰 삭제
     public void deleteReview(
             AuthUser authUser,
             Long reviewId
@@ -92,7 +92,7 @@ public class ReviewService {
         );
 
         if (!Objects.equals(review.getUser().getId(), authUser.getId())) {
-            throw new BusinessException(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW); // 예시 에러 코드
+            throw new BusinessException(ReviewErrorCode.FORBIDDEN_ACCESS_REVIEW);
         }
 
         review.softDelete();

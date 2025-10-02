@@ -12,7 +12,7 @@ public class BookUpdateRequest {
     private String publisher;
 
     @Size(min = 10, max = 20)
-    private String isbn; // 변경 시에도 유니크 검증 필요
+    private String isbn;
 
     private BookCategory category;
 

@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.bookstoreapp.common.entity.BaseEntity;
-import org.example.bookstoreapp.domain.contributor.entity.Contributor;
 import org.example.bookstoreapp.domain.book.entity.Book;
+import org.example.bookstoreapp.domain.contributor.entity.Contributor;
 import org.example.bookstoreapp.domain.contributor.entity.ContributorRole;
 
 @Entity

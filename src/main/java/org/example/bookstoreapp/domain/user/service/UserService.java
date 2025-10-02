@@ -49,7 +49,6 @@ public class UserService {
     public static void validateNewPassword(UserChangeNameAndPasswordRequest userChangeNameAndPasswordRequest) {
         String newPassword = userChangeNameAndPasswordRequest.getNewPassword();
 
-        // 정규 표현식으로 모든 조건(길이, 영문, 숫자, 특수문자)을 한 번에 검사
         if (!newPassword.matches(PASSWORD_REGEXP)) {
             throw new BusinessException(AuthErrorCode.INVALID_PASSWORD_FORMAT);
         }

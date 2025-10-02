@@ -23,9 +23,7 @@ public class LibraryController {
 
     private final LibraryService libraryService;
 
-    // 내 서재 조회 + 내 서재 생성(1회만)//
-    // - offset 방식 (page, size 기반)
-    // - Slice 사용 (서재 내 총 권수 필요없으므로 선택)
+    // 내 서재 조회 + 내 서재 생성(1회만)
     @GetMapping
     public ResponseEntity<ApiResponse<Slice<LibraryBookResponse>>> getMyLibrary(
             @AuthenticationPrincipal AuthUser authUser,
@@ -41,8 +39,7 @@ public class LibraryController {
                 .body(ApiResponse.success("내 서재를 조회했습니다.", librarySlice));
     }
 
-    // 내 서재에 책 등록 //
-    // 등록 시 해당 책 정보만 반환
+    // 내 서재에 책 등록
     @PostMapping
     public ResponseEntity<ApiResponse<LibraryBookSimpleResponse>> addBookLibrary(
             @AuthenticationPrincipal AuthUser authUser,
@@ -54,7 +51,7 @@ public class LibraryController {
                 .body(ApiResponse.success("내 서재에 책을 추가했습니다.", response));
     }
 
-    // 내 서재에서 책 삭제 //
+    // 내 서재에서 책 삭제
     @DeleteMapping("/books/{bookId}")
     public ResponseEntity<ApiResponse<Void>> deleteBookMyLibrary(
             @AuthenticationPrincipal AuthUser authUser,

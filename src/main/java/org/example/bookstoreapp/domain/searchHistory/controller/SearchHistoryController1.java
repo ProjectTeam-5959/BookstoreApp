@@ -36,7 +36,7 @@ public class SearchHistoryController1 {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-            @AuthenticationPrincipal @Nullable AuthUser authUser    // null 가능 -> 비로그인한 유저도 검색 가능하도록
+            @AuthenticationPrincipal @Nullable AuthUser authUser
     ) {
         BookCategory bookCategory = BookCategory.from(category);
         Page<SearchResponse> response = searchHistoryService.searchKeyword(

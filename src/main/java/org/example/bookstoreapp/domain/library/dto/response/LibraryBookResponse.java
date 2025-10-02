@@ -18,7 +18,6 @@ public class LibraryBookResponse {
     private final LocalDateTime addedAt;
 
     // 정적 팩토리 메서드
-    // LibraryBook + 저자 리스트 → LibraryBookResponse 로 변환
     public static LibraryBookResponse of(LibraryBook libraryBook, List<String> authors) {
 
         return new LibraryBookResponse(

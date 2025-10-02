@@ -38,7 +38,6 @@ public class LibraryService {
     private final BookContributorRepository bookContributorRepository;
 
     // 중복 로직 메서드 - 내 서재 가져오기 + 서재 생성(최초 1회)
-    // findByUserId -> Optional! => 있으면 Library 반환 / 없으면 orElseGet 구문 실행되어 서재 생성
     private Library getLibraryOrCreate(AuthUser authUser) {
         return libraryRepository.findByUserId(authUser.getId()).orElseGet(
                 () -> {
@@ -52,7 +51,6 @@ public class LibraryService {
 
     // 책 ID 리스트로 저자 맵 만들기 (분리)
     private Map<Long, List<String>> getBookAuthorsMap(List<Long> bookIds) {
-        // Repository 에서 JPQL 쿼리를 통해 'AUTHOR' 작가만 거름
         List<BookContributor> authors = bookContributorRepository.findAllByBookIds(bookIds);
 
         return authors.stream()
@@ -67,8 +65,7 @@ public class LibraryService {
                 );
     }
 
-    // 내 서재 조회 (무한 스크롤 적용) //
-    // 1회 서재 생성 로직 포함되므로 readOnly = true 불가
+    // 내 서재 조회 (무한 스크롤 적용)
     public Slice<LibraryBookResponse> getMyLibrary(AuthUser authUser, Pageable pageable) {
 
         Library library = getLibraryOrCreate(authUser);
@@ -93,7 +90,7 @@ public class LibraryService {
         );
     }
 
-    // 내 서재에 책 추가 //
+    // 내 서재에 책 추가
     public LibraryBookSimpleResponse addBookLibrary(AuthUser authUser, AddBookRequest addBookRequest) {
 
         Library library = getLibraryOrCreate(authUser);
@@ -117,7 +114,7 @@ public class LibraryService {
         return  LibraryBookSimpleResponse.from(libraryBook);
     }
 
-    // 내 서재에 책 삭제 //
+    // 내 서재에 책 삭제
     public void deleteBookLibrary(AuthUser authUser, Long bookId) {
 
         Library library = libraryRepository.findByUserId(authUser.getId()).orElseThrow(

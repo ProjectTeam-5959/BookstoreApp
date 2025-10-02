@@ -15,8 +15,6 @@ public class PageResponse<T> {
     private final int size;
     private final int number;
 
-//    public PageResponse() {}
-
     public PageResponse(List<T> content,
                         long totalElements,
                         int totalPages, int size, int number
@@ -28,10 +26,9 @@ public class PageResponse<T> {
         this.number = number;
     }
 
-    /// PageResponse.of(Page<T>) 팩토리
     public static <T> PageResponse<T> of(Page<T> page) {
         return new PageResponse<>(
-                page.getContent(),      // 원본, 메타데이터는 page에서 그대로 사용
+                page.getContent(),
                 page.getTotalElements(),
                 page.getTotalPages(),
                 page.getSize(),
@@ -39,30 +36,13 @@ public class PageResponse<T> {
         );
     }
 
-    /// <최근 활동 조회>
-    /// 엔티티 에서 DTO로 변환된 Content 주입이 필요하면??
     public static <R> PageResponse<R> of(Page<?> page, List<R> mappedContent) {
         return new PageResponse<>(
-                mappedContent,          // 가공본, dto으로 변환한 내용만 원하는 형태로 바꾸고 싶을 때 사용
+                mappedContent,
                 page.getTotalElements(),
                 page.getTotalPages(),
                 page.getSize(),
                 page.getNumber()
         );
     }
-
-//    public List<T> getContent() {
-//        return content; }
-//
-//    public long getTotalElements() {
-//        return totalElements; }
-//
-//    public int getTotalPages() {
-//        return totalPages; }
-//
-//    public int getSize() {
-//        return size; }
-//
-//    public int getNumber() {
-//        return number; }
 }

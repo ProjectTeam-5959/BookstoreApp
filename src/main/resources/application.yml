@@ -5,7 +5,7 @@ spring:
     password: ${PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: true
@@ -20,3 +20,14 @@ server:
 jwt:
   secret:
     key: TXlTdXBlclNlY3JldEtleQTXlTdXBlclNlY3JldEtleQTXlTdXBlclNlY3JldEtleQ==
+
+# 로그 레벨
+  logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG           # SQL 로그
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE   # 파라미터 바인딩 값 출력

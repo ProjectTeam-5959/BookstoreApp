@@ -46,14 +46,6 @@ public class BookController {
         ).body(ApiResponse.success("도서를 등록했습니다.", created));
     }
 
-    /**
-     * UriComponentsBuilder 설명
-     * * - 스프링이 제공하는 URI 빌더
-     * * - 컨트롤러 메서드 파라미터로 선언 시 스프링이 자동 주입
-     * * - URI 템플릿 변수 치환, 쿼리 파라미터 추가 등 지원
-     * * - 주로 POST 요청 후 생성된 리소스의 URI를 Location 헤더에 포함할 때 사용
-     */
-
     // 도서 단건 조회
     @GetMapping("/admin/books/{bookId}")
     public ResponseEntity<ApiResponse<BookSingleResponse>> get(
@@ -100,7 +92,7 @@ public class BookController {
         return ResponseEntity.ok(ApiResponse.success("해당 도서를 삭제했습니다."));
     }
 
-    // 도서랑 기여자 연관관계 추가 - 병수,지나,현경의 작품!!!!
+    // 도서랑 기여자 연관관계 추가
     @PostMapping("/admin/books/{bookId}/contributors/{contributorId}")
     public ResponseEntity<ApiResponse<BookContributorResponse>> linkContributor(
             @PathVariable Long bookId,

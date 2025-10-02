@@ -40,14 +40,12 @@ public class SearchHistoryService {
             Pageable pageable,
             AuthUser authUser
     ) {
-        // 1. 키워드 검증(null 이거나 빈 문자열일 때)
         if ((title == null || title.isBlank()) &&
                 (name == null || name.isBlank()) &&
                 (category == null)) {
             throw new BusinessException(SearchErrorCode.KEYWORD_EMPTY);
         }
 
-        // 2. 실제 도서 검색
         Page<Book> books = bookRepository.findBooksByKeyword(
                 title,
                 name,
@@ -59,7 +57,6 @@ public class SearchHistoryService {
             throw new BusinessException(SearchErrorCode.BOOK_NOT_FOUND);
         }
 
-        // 3. 검색 기록 저장(비로그인 유저도 포함)
         User user;
 
         if (authUser != null) {
@@ -67,10 +64,9 @@ public class SearchHistoryService {
                     () -> new BusinessException(SearchErrorCode.UNAUTHORIZED));
 
         } else {
-            // 로그인 안 한 경우 -> 유저 없이 저장
             user = null;
-
         }
+
         SearchHistory searchHistory = new SearchHistory(
                 title,
                 name,
@@ -96,8 +92,7 @@ public class SearchHistoryService {
     @Transactional(readOnly = true)
     public Page<MySearchHistoryResponse> mySearchHistory(AuthUser authUser, Pageable pageable) {
         return searchHistoryRepository.findByUserId(authUser.getId(), pageable)
-                .map(searchHistory -> MySearchHistoryResponse.from(searchHistory)
-                );
+                .map(searchHistory -> MySearchHistoryResponse.from(searchHistory));
     }
 
     // 인기 키워드 title별 조회

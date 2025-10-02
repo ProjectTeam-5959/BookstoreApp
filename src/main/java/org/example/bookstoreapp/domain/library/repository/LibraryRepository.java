@@ -7,6 +7,5 @@ import java.util.Optional;
 
 public interface
 LibraryRepository extends JpaRepository<Library, Long> {
-
     Optional<Library> findByUserId(Long userId);
 }

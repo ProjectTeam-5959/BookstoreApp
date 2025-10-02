@@ -34,7 +34,7 @@ public class SearchHistory {
 
     // 유저와 연관관계 (추후 주석 해제)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")    // 로그인 안 한 경우 null 허용
+    @JoinColumn(name = "user_id")
     private User user;
 
     @CreatedDate

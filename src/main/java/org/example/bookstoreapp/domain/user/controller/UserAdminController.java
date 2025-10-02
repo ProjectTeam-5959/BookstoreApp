@@ -3,15 +3,16 @@ package org.example.bookstoreapp.domain.user.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.bookstoreapp.common.response.ApiResponse;
-import org.example.bookstoreapp.domain.auth.dto.AuthUser;
 import org.example.bookstoreapp.domain.user.dto.request.UserRoleChangeRequest;
 import org.example.bookstoreapp.domain.user.dto.response.UserResponse;
 import org.example.bookstoreapp.domain.user.enums.UserRole;
 import org.example.bookstoreapp.domain.user.service.UserAdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Secured(UserRole.Authority.ADMIN)

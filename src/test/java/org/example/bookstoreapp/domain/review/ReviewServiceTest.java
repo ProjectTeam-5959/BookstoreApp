@@ -37,6 +37,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * 시간 관계상 무한 페이지네이션 Cursor 방식으로 개선 후 테스트 코드 업데이트 못 함.
+ */
 @ExtendWith(MockitoExtension.class) // 단위 테스트
 public class ReviewServiceTest {
 

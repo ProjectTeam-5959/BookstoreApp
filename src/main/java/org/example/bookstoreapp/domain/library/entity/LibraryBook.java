@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
                 @UniqueConstraint(columnNames = {"library_id", "book_id"})
       }
 )
-// delete = false 만 조회!
-// @Where(clause = "deleted = false")는 지원 중단으로 사용 불가
 @SQLRestriction("deleted = false")
 public class LibraryBook extends SoftDelete {
 
@@ -53,7 +51,6 @@ public class LibraryBook extends SoftDelete {
         return new LibraryBook(library, book);
     }
 
-    // restore 시점에 addedAt 갱신
     @Override
     public void restore() {
         super.restore();

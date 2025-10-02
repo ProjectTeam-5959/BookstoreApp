@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-// BusinessException을 `ErrorCode` 기반으로 변경
 public class BusinessException extends RuntimeException {
 
     private final ErrorCode errorCode;
