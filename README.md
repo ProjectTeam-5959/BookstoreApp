@@ -1,16 +1,92 @@
-    목표
+    BookStoreApp
 
+-----
+
+    목표
+    
+- 온라인 서점 애플리케이션 구현 (밀리의 서재)
+- 사용자 인증 및 권한 기반 도서 관리 시스템 구축
+- 개인 라이브러리, 리뷰, 검색 히스토리 등 사용자의 독서 활동을 기록하고 관리
+- 확장 가능한 도메인 구조 설계 및 모듈화된 서비스 개발
 -----
 
     개발 대상
 
-----
+- 인증(Auth) : JWT 기반 인증 및 권한 제어
+
+- 사용자(User) : 회원가입, 로그인, 개인 정보 수정, 권한 관리
+
+- 도서(Book) : 도서 등록, 수정, 삭제, 검색, 카테고리 관리
+
+- 저자/기여자(Contributor) : 저자 및 기여자 등록 및 관리
+
+- 리뷰(Review) : 사용자가 작성한 리뷰 등록/조회/수정/삭제
+
+- 라이브러리(Library) : 사용자가 소장한 도서를 개인 라이브러리에 추가/삭제
+
+- 검색 히스토리(SearchHistory) : 사용자의 검색 기록 저장 및 조회
+
+-----
 
     개발 조건
 
-----
+- 언어/프레임워크 : Java 17, Spring Boot 3.x
+
+- 빌드 툴 : Gradle
+
+- ORM : Spring Data JPA, QueryDSL
+
+- 보안 : Spring Security, JWT 인증
+
+- DB : MySQL
+
+- 테스트 : JUnit5, Spring Security Test, Mockito
+
+- API 통신 : RESTful API 기반, ApiResponse 표준 응답 구조
+
+- 예외 처리 : 글로벌 예외 핸들러 및 도메인별 ErrorCode 설계
+
+-----
 
     개발 프로세스
+
+- 요구사항 분석
+
+    - 사용자 요구사항을 도메인 단위로 정의 (도서, 유저, 리뷰, 라이브러리)
+
+- DB 및 엔티티 설계
+
+    - BaseEntity(공통 엔티티) 상속 구조
+
+    - Soft Delete 적용
+
+- 도메인 개발
+
+    - Entity → Service → Repository → Controller 순서로 구현
+
+- 공통 모듈 구축
+
+    - SecurityConfig, JwtUtil, GlobalExceptionHandler, ApiResponse 등
+
+- 테스트 코드 작성
+
+    - 도메인 단위 단위테스트
+
+    - 인증/인가 통합테스트
+
+- API 명세 작성
+
+    - README 기반 API 문서화
+
+- 리팩토링 및 성능 개선
+
+    - 캐싱 (Cache)
+   
+    - 인덱스
+  
+    - QueryDSL 최적화 + (N+1 문제 해결)
+
+    - 무한 스크롤 (Slice Cursor)
 
 -----
 
@@ -203,11 +279,11 @@ src
 
     주요기능
 
----
+-----
 
     개발 환경
 
-----
+-----
 
     API 명세서
 
@@ -280,5 +356,6 @@ src
 | GET    | /api/v1/search/histories/popular/top10    | 내 검색기록 기반 도서 Top10      | 없음                                                                                                         | 없음           | {<br/>"success": Boolean,<br/>"message": String,<br/>"data": [<br/>{<br/>"id": Long,<br/>"title": String,<br/>"contributors": [<br/>{<br/>"id": Long,<br/>"name": String,<br/>"role": Enum<br/>}<br/>],<br/>"category": Enum,<br/>"createdAt": LocalDateTime<br/>}<br/>],<br/>"timestamp": LocalDateTime<br/>}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 200 OK      | 401 UNAUTHORIZED , <br/>500 INTERNALSERVERERROR                 |
 | GET    | /api/v2/search/histories/popular/top10    | 내 검색기록 기반 도서 Top10 (캐싱) | 없음                                                                                                         | 없음           | {<br/>"success": Boolean,<br/>"message": String,<br/>"data": [<br/>{<br/>"id": Long,<br/>"title": String,<br/>"contributors": [<br/>{<br/>"id": Long,<br/>"name": String,<br/>"role": Enum<br/>}<br/>],<br/>"category": Enum,<br/>"createdAt": LocalDateTime<br/>}<br/>],<br/>"timestamp": LocalDateTime<br/>}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 200 OK      | 401 UNAUTHORIZED , <br/>500 INTERNALSERVERERROR                 |
 
+-----
     ERD
 <img width="1081" height="852" alt="image" src="https://github.com/user-attachments/assets/d8cae298-6275-4d64-8180-9c84e0afea1b" />
